@@ -1,26 +1,20 @@
 package activeSegmentation.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
 import activeSegmentation.ASCommon;
 import activeSegmentation.IEvaluation;
-//import activeSegmentation.ILearningManager;
-//import activeSegmentation.IProjectManager;
 import activeSegmentation.evaluation.EvaluationMetrics;
 import activeSegmentation.evaluation.EvaluationPanel;
 import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.learning.ClassifierManager;
 import activeSegmentation.prj.ProjectManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+//import activeSegmentation.ILearningManager;
+//import activeSegmentation.IProjectManager;
 
 
 public class Gui implements ASCommon {
@@ -28,6 +22,7 @@ public class Gui implements ASCommon {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
 	private LearningPanel learningPanel;
+	private LearningPanel deepLearningPanel;
 	private FilterPanel filterPanel;
 	private FeaturePanelNew featurePanel;
 	//private ViewFilterResults viewFilterResults;
@@ -37,11 +32,13 @@ public class Gui implements ASCommon {
 	final ActionEvent LEARNING_BUTTON_PRESSED = new ActionEvent(this, 2, "Learning");
 	final ActionEvent EVALUATION_BUTTON_PRESSED = new ActionEvent(this, 3, "Evaluation");
 	final ActionEvent FILTERVIS_BUTTON_PRESSED = new ActionEvent(this, 4, "FilterVis");
+	final ActionEvent DEEP_LEARNING_BUTTON_PRESSED = new ActionEvent(this, 5, "DeepLearning");
 
 	
 	private FeatureManager featureManager;
 	private ClassifierManager learningManager;
 	private ProjectManager projectManager;
+	private ClassifierManager deepLearningManager;
 	
 
 
@@ -86,6 +83,12 @@ public class Gui implements ASCommon {
 			EvaluationPanel evaluationPanel = new EvaluationPanel(this.projectManager, evaluation);
 			SwingUtilities.invokeLater(evaluationPanel);
 		}
+		if (event == this.DEEP_LEARNING_BUTTON_PRESSED) {
+			if (this.deepLearningPanel == null) {
+				this.deepLearningPanel = new LearningPanel(this.projectManager, this.deepLearningManager);
+			}
+			SwingUtilities.invokeLater(this.deepLearningPanel);
+		}
 	}
 	
 	
@@ -109,7 +112,9 @@ public class Gui implements ASCommon {
 		this.controlPanel.add(addButton("Filter Visualization", null, 275, 150, 200, 50, this.FILTERVIS_BUTTON_PRESSED));
 		this.controlPanel.add(addButton("Feature Extraction", null, 25, 250, 200, 50, this.FEATURE_BUTTON_PRESSED));
 		this.controlPanel.add(addButton("Model Learning", null, 275, 250, 200, 50, this.LEARNING_BUTTON_PRESSED));
-		//this.controlPanel.add(addButton("EVALUATION", null, 25, 350, 200, 50, this.EVALUATION_BUTTON_PRESSED));
+
+		this.controlPanel.add(addButton("Deep Learning", null, 25, 350, 200, 50, this.DEEP_LEARNING_BUTTON_PRESSED));
+		this.controlPanel.add(addButton("EVALUATION", null, 275, 350, 200, 50, this.EVALUATION_BUTTON_PRESSED));
 
 		this.controlPanel.setLocation(0, 0);
 		this.mainFrame.add(this.controlPanel);

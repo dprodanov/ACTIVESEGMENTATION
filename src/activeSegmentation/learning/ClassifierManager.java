@@ -1,27 +1,19 @@
 package activeSegmentation.learning;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ForkJoinPool;
-
-import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Classifier;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.trees.J48;
-import weka.classifiers.trees.REPTree;
-import weka.classifiers.trees.RandomForest;
-import weka.core.Instance;
 import activeSegmentation.ASCommon;
 import activeSegmentation.IClassifier;
-//import activeSegmentation.IProjectManager;
-import activeSegmentation.prj.ProjectInfo;
-import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.IDataSet;
 import activeSegmentation.IFeatureSelection;
+import activeSegmentation.prj.ProjectInfo;
+import activeSegmentation.prj.ProjectManager;
+import weka.classifiers.trees.RandomForest;
+import weka.core.Instance;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.ForkJoinPool;
+
+//import activeSegmentation.IProjectManager;
 //import activeSegmentation.LearningManager;
 
 ///public class ClassifierManager implements ILearningManager {

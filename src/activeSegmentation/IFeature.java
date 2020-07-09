@@ -1,11 +1,11 @@
 package activeSegmentation;
 
 
-import java.util.Collection;
-
 import activeSegmentation.prj.ClassInfo;
 import ij.gui.Roi;
 import weka.core.Instance;
+
+import java.util.Collection;
 
 /**
  * 				
@@ -42,7 +42,7 @@ public interface IFeature {
 	/**
 	 * Create Instances of Training DataSet
 	 * @param classLabels
-	 * @param classes
+	 * @param classInfos - contains information about class
 	 * @param features can be of pixel level features or class level features
 	 */
 	public void createTrainingInstance(Collection<ClassInfo> classInfos);

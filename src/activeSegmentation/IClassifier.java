@@ -13,7 +13,7 @@ import weka.core.Instance;
  *
  * @contents
  * Interface for classifier, It will allow to use any 
- * type of classifier in our system
+ * type of weka classifier in our system
  * 
  * general use: classification + segmentation 
  * 

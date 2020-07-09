@@ -1,23 +1,14 @@
 package activeSegmentation.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import activeSegmentation.*;
+import activeSegmentation.ASCommon;
+import activeSegmentation.ProjectType;
 import activeSegmentation.prj.ProjectManager;
 import ij.WindowManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 public class CreateProjectUI implements Runnable, ASCommon {
@@ -179,7 +170,8 @@ public class CreateProjectUI implements Runnable, ASCommon {
 				new Gui(projectManager);
 			}
 			else {
-				errorText.setText(message);
+				errorText.setText( message);
+
 			}
 		}
 	}
@@ -253,7 +245,7 @@ public class CreateProjectUI implements Runnable, ASCommon {
 		//pluginsDir.setBounds( 200, 300, 250, 30 );
 		//controlFrame.add(pluginsDir);	
 		errorText.setFont(new Font( "Arial", Font.BOLD, 12 ));
-		errorText.setBounds(30, 300, 600, 30 );
+		errorText.setBounds(20, 400, 700, 60 );
 		errorText.setForeground(Color.RED);
 		controlFrame.add(errorText);
 

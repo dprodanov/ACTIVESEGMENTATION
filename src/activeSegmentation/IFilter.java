@@ -5,14 +5,9 @@ import ij.gui.Roi;
 import ij.process.ImageProcessor;
 import ijaux.datatype.Pair;
 
-import java.lang.reflect.Field;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import activeSegmentation.filter.LoG_Filter_;
 
 /**
  * * 
@@ -38,7 +33,8 @@ import activeSegmentation.filter.LoG_Filter_;
  *      License along with this library; if not, write to the Free Software
  *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public interface IFilter extends IAnnotated {
+public interface
+IFilter extends IAnnotated {
 	
 	
 	/**

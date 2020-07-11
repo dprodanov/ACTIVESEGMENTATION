@@ -142,8 +142,8 @@ public class DeepLearningManager {
 
 
     //	@Override
-    public IDeepLearning getClassifier() {
-        return this.model;
+    public Object getClassifier() {
+        return this.model.getClass();
     }
 
 }

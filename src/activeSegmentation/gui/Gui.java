@@ -6,6 +6,7 @@ import activeSegmentation.evaluation.EvaluationMetrics;
 import activeSegmentation.evaluation.EvaluationPanel;
 import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.learning.ClassifierManager;
+import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectManager;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ public class Gui implements ASCommon {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
 	private LearningPanel learningPanel;
-	private LearningPanel deepLearningPanel;
+	private DeepLearningPanel deepLearningPanel;
 	private FilterPanel filterPanel;
 	private FeaturePanelNew featurePanel;
 	//private ViewFilterResults viewFilterResults;
@@ -38,7 +39,7 @@ public class Gui implements ASCommon {
 	private FeatureManager featureManager;
 	private ClassifierManager learningManager;
 	private ProjectManager projectManager;
-	private ClassifierManager deepLearningManager;
+	private DeepLearningManager deepLearningManager;
 	
 
 
@@ -85,7 +86,7 @@ public class Gui implements ASCommon {
 		}
 		if (event == this.DEEP_LEARNING_BUTTON_PRESSED) {
 			if (this.deepLearningPanel == null) {
-				this.deepLearningPanel = new LearningPanel(this.projectManager, this.deepLearningManager);
+				this.deepLearningPanel = new DeepLearningPanel(this.projectManager, this.deepLearningManager);
 			}
 			SwingUtilities.invokeLater(this.deepLearningPanel);
 		}

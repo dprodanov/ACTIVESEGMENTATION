@@ -1,14 +1,13 @@
 package activeSegmentation.gui;
 
 import activeSegmentation.ASCommon;
-import activeSegmentation.IClassifier;
-import activeSegmentation.learning.ClassifierManager;
-import activeSegmentation.learning.WekaClassifier;
+import activeSegmentation.IDeepLearning;
+import activeSegmentation.deepLearning.UNetImplementation;
+import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.util.GuiUtil;
 import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Classifier;
 import weka.core.OptionHandler;
 import weka.core.Utils;
 import weka.gui.GenericObjectEditor;
@@ -20,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DeepLearningPanel implements Runnable, ASCommon {
-    private JList<String> classifierList;
+    private JList<String> modelList;
     private GenericObjectEditor m_ClassifierEditor = new GenericObjectEditor();
     private String originalOptions;
     String originalClassifierName;
@@ -31,13 +30,13 @@ public class DeepLearningPanel implements Runnable, ASCommon {
     JList<String> featureSelList;
     final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent(this, 1, "Compute");
     final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent(this, 2, "Save");
-    ClassifierManager learningManager;
+    DeepLearningManager deepLearningManager;
 
-    public DeepLearningPanel(ProjectManager projectManager,ClassifierManager learningManager )  {
+    public DeepLearningPanel(ProjectManager projectManager, DeepLearningManager deepLearningManager)  {
         this.projectManager = projectManager;
-        this.learningManager=learningManager;
+        this.deepLearningManager=deepLearningManager;
         this.projectInfo = projectManager.getMetaInfo();
-        this.classifierList = GuiUtil.model();
+        this.modelList = GuiUtil.model();
     }
 
     public void doAction(ActionEvent event)  {
@@ -49,9 +48,8 @@ public class DeepLearningPanel implements Runnable, ASCommon {
             AbstractClassifier testClassifier=setClassifier();
 
             if(testClassifier!=null) {
-                IClassifier classifier = new WekaClassifier(testClassifier);
-
-                this.learningManager.setClassifier(classifier);
+                IDeepLearning deepModel = new UNetImplementation();
+                this.deepLearningManager.setClassifier(deepModel);
                 this.projectManager.updateMetaInfo(this.projectInfo);
             }
 
@@ -71,8 +69,8 @@ public class DeepLearningPanel implements Runnable, ASCommon {
         learningJPanel.setBorder(BorderFactory.createTitledBorder("Learning"));
 
         PropertyPanel m_CEPanel = new PropertyPanel(this.m_ClassifierEditor);
-        this.m_ClassifierEditor.setClassType(Classifier.class);
-        this.m_ClassifierEditor.setValue(this.learningManager.getClassifier());
+        this.m_ClassifierEditor.setClassType(UNetImplementation.class);
+        this.m_ClassifierEditor.setValue(this.deepLearningManager.getClassifier());
         Object c = this.m_ClassifierEditor.getValue();
         originalOptions = "";
         this.originalClassifierName = c.getClass().getName();

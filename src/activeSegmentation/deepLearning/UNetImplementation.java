@@ -103,7 +103,6 @@ public class UNetImplementation implements IDeepLearning {
             DataSet t = dataTestIter.next();
             scaler.revert(t);
             INDArray[] predicted = unetTransfer.output(t.getFeatures());
-            INDArray input = t.getFeatures();
             INDArray pred = predicted[0].reshape(new int[]{512, 512});
             Evaluation eval = new Evaluation();
 

@@ -26,19 +26,11 @@ public class LabelGenerator implements PathLabelGenerator {
         // TODO Auto-generated method stub
         String dirName;
         file=new File(path);
-//        System.out.println(path);
         dirName=labelsDir + "/label/";
         System.out.println(dirName);
         try
         {
             INDArray origImg=imageLoader.asMatrix(new File(dirName + file.getName()));
-//            Image image = ImageIO.read(new File(dirName + "/1.png"));
-//            JFrame frame = new JFrame();
-//            JLabel lblimage = new JLabel(new ImageIcon(image));
-//            frame.getContentPane().add(lblimage, BorderLayout.CENTER);
-//            frame.setSize(512, 512);
-//            frame.setVisible(true);
-//            System.out.println(image);
             return new NDArrayWritable(origImg);
         }
         catch(IOException ioe)

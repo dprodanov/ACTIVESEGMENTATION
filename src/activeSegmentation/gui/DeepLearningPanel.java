@@ -9,7 +9,6 @@ import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.util.GuiUtil;
 import weka.classifiers.AbstractClassifier;
 import weka.core.OptionHandler;
-import weka.core.Utils;
 import weka.gui.GenericObjectEditor;
 import weka.gui.PropertyPanel;
 
@@ -66,17 +65,17 @@ public class DeepLearningPanel implements Runnable, ASCommon {
         learningP.setBackground(Color.GRAY);
 
         JPanel learningJPanel = new JPanel();
-        learningJPanel.setBorder(BorderFactory.createTitledBorder("Learning"));
+        learningJPanel.setBorder(BorderFactory.createTitledBorder("Select the model"));
 
         PropertyPanel m_CEPanel = new PropertyPanel(this.m_ClassifierEditor);
-        this.m_ClassifierEditor.setClassType(UNetImplementation.class);
-        this.m_ClassifierEditor.setValue(this.deepLearningManager.getClassifier());
-        Object c = this.m_ClassifierEditor.getValue();
-        originalOptions = "";
-        this.originalClassifierName = c.getClass().getName();
-        if ((c instanceof OptionHandler)) {
-            originalOptions = Utils.joinOptions(((OptionHandler)c).getOptions());
-        }
+//        this.m_ClassifierEditor.setClassType(UNetImplementation.class);
+//        this.m_ClassifierEditor.setValue(this.deepLearningManager.getClassifier());
+    //    Object c = this.m_ClassifierEditor.getValue();
+     //   originalOptions = "";
+    //    this.originalClassifierName = c.getClass().getName();
+//        if ((c instanceof OptionHandler)) {
+//            originalOptions = Utils.joinOptions(((OptionHandler)c).getOptions());
+//        }
         m_CEPanel.setBounds(30, 30, 250, 30);
         learningJPanel.add(m_CEPanel);
         learningJPanel.setBounds(10, 20, 300, 80);
@@ -98,17 +97,20 @@ public class DeepLearningPanel implements Runnable, ASCommon {
         CheckboxGroup checkboxGroup = new CheckboxGroup();
         options.setBounds(10, 120, 300, 80);
 
-        Checkbox pasiveLearning = new Checkbox("Passive Learning", checkboxGroup, true);
-        Checkbox activeLearning = new Checkbox("Active Learning", checkboxGroup, true);
-        options.add(pasiveLearning);
-        options.add(activeLearning);
+
+        Checkbox transferLearning = new Checkbox("Transfer learning", checkboxGroup, false);
+        options.add(transferLearning);
         JPanel resetJPanel = new JPanel();
         resetJPanel.setBackground(Color.GRAY);
         resetJPanel.setBounds(370, 120, 200, 80);
         resetJPanel.add(addButton("SAVE", null, 370, 120, 200, 50, this.SAVE_BUTTON_PRESSED));
 
+        JPanel parametersPanel = new JPanel();
+        parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
+        parametersPanel.setBounds(370, 20, 200, 80);
+
+        learningP.add(parametersPanel);
         learningP.add(learningJPanel);
-        learningP.add(featureSelection);
         learningP.add(resetJPanel);
         learningP.add(options);
 
@@ -122,22 +124,22 @@ public class DeepLearningPanel implements Runnable, ASCommon {
         String options = "";
         String[] optionsArray = ((OptionHandler)c).getOptions();
         System.out.println(originalOptions);
-        if ((c instanceof OptionHandler)) {
-            options = Utils.joinOptions(optionsArray);
-        }
-        if ((!this.originalClassifierName.equals(c.getClass().getName())) ||
-                (!this.originalOptions.equals(options))) {
-            try
-            {
-                AbstractClassifier cls = (AbstractClassifier)c.getClass().newInstance();
-                cls.setOptions(optionsArray);
-                return cls;
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
-        }
+//        if ((c instanceof OptionHandler)) {
+//            options = Utils.joinOptions(optionsArray);
+//        }
+//        if ((!this.originalClassifierName.equals(c.getClass().getName())) ||
+//                (!this.originalOptions.equals(options))) {
+//            try
+//            {
+//                AbstractClassifier cls = (AbstractClassifier)c.getClass().newInstance();
+//                cls.setOptions(optionsArray);
+//                return cls;
+//            }
+//            catch (Exception ex)
+//            {
+//                ex.printStackTrace();
+//            }
+//        }
         return null;
     }
 

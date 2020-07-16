@@ -10,7 +10,6 @@ import activeSegmentation.util.GuiUtil;
 import weka.classifiers.AbstractClassifier;
 import weka.core.OptionHandler;
 import weka.gui.GenericObjectEditor;
-import weka.gui.PropertyPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,36 +65,18 @@ public class DeepLearningPanel implements Runnable, ASCommon {
 
         JPanel learningJPanel = new JPanel();
         learningJPanel.setBorder(BorderFactory.createTitledBorder("Select the model"));
+        String[] models = {"UNet", "OtherModel"};
+        JList list = new JList(models);
+        JScrollPane scrollPane = new JScrollPane(list);
+        learningJPanel.add(scrollPane);
+        learningJPanel.setBounds(30, 30, 250, 50);
 
-        PropertyPanel m_CEPanel = new PropertyPanel(this.m_ClassifierEditor);
-//        this.m_ClassifierEditor.setClassType(UNetImplementation.class);
-//        this.m_ClassifierEditor.setValue(this.deepLearningManager.getClassifier());
-    //    Object c = this.m_ClassifierEditor.getValue();
-     //   originalOptions = "";
-    //    this.originalClassifierName = c.getClass().getName();
-//        if ((c instanceof OptionHandler)) {
-//            originalOptions = Utils.joinOptions(((OptionHandler)c).getOptions());
-//        }
-        m_CEPanel.setBounds(30, 30, 250, 30);
-        learningJPanel.add(m_CEPanel);
-        learningJPanel.setBounds(10, 20, 300, 80);
 
-        JPanel featureSelection = new JPanel();
-        featureSelection.setBorder(BorderFactory.createTitledBorder("Feature Selection"));
-        featureSelection.setBounds(370, 20, 200, 80);
-        DefaultListModel<String> model = new DefaultListModel<String>();
-        this.featureSelList = new JList<String>(model);
-        model.addElement("NONE");
-        model.addElement("Principle Component Analysis");
-        model.addElement("Correlation Based Selection");
-        this.featureSelList.setBackground(Color.WHITE);
-        this.featureSelList.setSelectedIndex(0);
-        featureSelection.add(this.featureSelList);
 
         JPanel options = new JPanel();
         options.setBorder(BorderFactory.createTitledBorder("Learning Options"));
         CheckboxGroup checkboxGroup = new CheckboxGroup();
-        options.setBounds(10, 120, 300, 80);
+        options.setBounds(10, 120, 250, 80);
 
 
         Checkbox transferLearning = new Checkbox("Transfer learning", checkboxGroup, false);

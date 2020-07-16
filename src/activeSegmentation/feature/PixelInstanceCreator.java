@@ -1,18 +1,5 @@
 package activeSegmentation.feature;
 
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import activeSegmentation.ASCommon;
 import activeSegmentation.IDataSet;
 import activeSegmentation.IFeature;
@@ -20,13 +7,20 @@ import activeSegmentation.learning.WekaDataSet;
 import activeSegmentation.prj.ClassInfo;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.util.InstanceUtil;
-import weka.core.Attribute;
-import weka.core.Instance;
-import weka.core.Instances;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Roi;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import java.awt.*;
+import java.io.File;
+import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 				
@@ -71,6 +65,7 @@ public class PixelInstanceCreator implements IFeature {
 	private InstanceUtil instanceUtil= new InstanceUtil();
 	private ProjectInfo projectInfo;
 	private String projectString;
+
 	public PixelInstanceCreator( ProjectInfo projectInfo){
 		this.projectInfo=projectInfo;
 		this.projectString=this.projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR);
@@ -109,6 +104,7 @@ public class PixelInstanceCreator implements IFeature {
 		}
 		return this.images.size();
 	}
+
 
 	/**
 	 * Create training instances out of the user markings

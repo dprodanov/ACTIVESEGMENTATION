@@ -15,8 +15,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 
-public class DeepLearningPanel implements Runnable, ASCommon {
+public class DeepLearningPanel implements Runnable, ASCommon, PropertyChangeListener {
     private JList<String> modelList;
     private GenericObjectEditor m_ClassifierEditor = new GenericObjectEditor();
     private String originalOptions;
@@ -69,14 +70,14 @@ public class DeepLearningPanel implements Runnable, ASCommon {
         JList list = new JList(models);
         JScrollPane scrollPane = new JScrollPane(list);
         learningJPanel.add(scrollPane);
-        learningJPanel.setBounds(30, 30, 250, 50);
+        learningJPanel.setBounds(30, 30, 250, 60);
 
 
 
         JPanel options = new JPanel();
         options.setBorder(BorderFactory.createTitledBorder("Learning Options"));
         CheckboxGroup checkboxGroup = new CheckboxGroup();
-        options.setBounds(10, 120, 250, 80);
+        options.setBounds(30, 120, 250, 80);
 
 
         Checkbox transferLearning = new Checkbox("Transfer learning", checkboxGroup, false);
@@ -88,7 +89,36 @@ public class DeepLearningPanel implements Runnable, ASCommon {
 
         JPanel parametersPanel = new JPanel();
         parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
-        parametersPanel.setBounds(370, 20, 200, 80);
+        parametersPanel.setBounds(370, 20, 200, 100);
+
+        JLabel learningRateLabel = new JLabel("Learning rate:");
+        JLabel numEpochsLabel = new JLabel("Number of epochs:");
+        JLabel batchSizeLabel = new JLabel("Batch size:");
+
+
+        JFormattedTextField learningRate = new JFormattedTextField();
+        learningRate.setColumns(2);
+        learningRate.addPropertyChangeListener("value", this);
+        JFormattedTextField numEpochs = new JFormattedTextField();
+        numEpochs.setColumns(2);
+        numEpochs.addPropertyChangeListener("value", this);
+        JFormattedTextField batchSize = new JFormattedTextField();
+        batchSize.setColumns(2);
+        batchSize.addPropertyChangeListener("value", this);
+
+        learningRateLabel.setLabelFor(learningRateLabel);
+        numEpochsLabel.setLabelFor(numEpochs);
+        batchSizeLabel.setLabelFor(batchSize);
+//        learningRateLabel.setVisible(true);
+//        numEpochsLabel.setVisible(true);
+//        batchSizeLabel.setVisible(true);
+
+        parametersPanel.add(learningRateLabel);
+        parametersPanel.add(learningRate);
+        parametersPanel.add(numEpochsLabel);
+        parametersPanel.add(numEpochs);
+        parametersPanel.add(batchSizeLabel);
+        parametersPanel.add(batchSize);
 
         learningP.add(parametersPanel);
         learningP.add(learningJPanel);

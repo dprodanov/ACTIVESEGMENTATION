@@ -3,6 +3,7 @@ package activeSegmentation.gui;
 import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
 import activeSegmentation.deepLearning.UNetImplementation;
+import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.prj.ProjectManager;
@@ -30,13 +31,16 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent(this, 1, "Save");
     DeepLearningManager deepLearningManager;
     Button openButton;
-    Button saveButton;
+    Button featureButton;
     JFileChooser fc;
+    FeaturePanel featurePanel;
+    FeatureManager featureManager;
 
 
-    public DeepLearningPanel(ProjectManager projectManager, DeepLearningManager deepLearningManager)  {
+    public DeepLearningPanel(ProjectManager projectManager, DeepLearningManager deepLearningManager, FeatureManager featureManager)  {
         this.projectManager = projectManager;
         this.deepLearningManager=deepLearningManager;
+        this.featureManager = featureManager;
         this.projectInfo = projectManager.getMetaInfo();
         this.modelList = GuiUtil.model();
     }
@@ -72,7 +76,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
                 System.out.println("oops");
             }
             //Handle save button action.
-        } else if (e.getSource() == saveButton) {
+        } else if (e.getSource() == featureButton) {
             int returnVal = fc.showSaveDialog(DeepLearningPanel.this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
@@ -150,18 +154,26 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JPanel importLabels = new JPanel();
         importLabels.setBorder(BorderFactory.createTitledBorder("Import labels"));
         JFileChooser fc = new JFileChooser();
+        fc.setLayout(new BorderLayout());
+        fc.setSize(700,500);
         JButton openButton = new JButton("Import labels");
-        JButton saveButton = new JButton("Save labels");
+        openButton.addActionListener(e -> {
+            selectFile();
+        });
+        JButton featureButton = new JButton("Create labels");
+        featureButton.addActionListener(e ->{
+            new FeaturePanelNew(featureManager);
+        });
 
         fc.setVisible(true);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         JPanel buttonPanel = new JPanel(); //use FlowLayout
         buttonPanel.add(openButton);
-        buttonPanel.add(saveButton);
+        buttonPanel.add(featureButton);
 
         openButton.setVisible(true);
         openButton.addActionListener(this);
-        saveButton.addActionListener(this);
+        featureButton.addActionListener(this);
         File labels = new File("label");
         if(!labels.exists()){
             labels.mkdirs();
@@ -193,6 +205,18 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 //        double payment = computePayment(amount, rate, numPeriods);
 //        paymentField.setValue(new Double(payment));
 //    }
+
+
+    public void selectFile() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File f = chooser.getSelectedFile();
+            System.out.println(f.getName());
+        } else {
+            System.out.println("doesnt work");
+        }
+    }
 
     private IDeepLearning setClassifier()
     {

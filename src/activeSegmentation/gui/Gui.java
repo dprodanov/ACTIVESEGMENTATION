@@ -86,7 +86,7 @@ public class Gui implements ASCommon {
 		}
 		if (event == this.DEEP_LEARNING_BUTTON_PRESSED) {
 			if (this.deepLearningPanel == null) {
-				this.deepLearningPanel = new DeepLearningPanel(this.projectManager, this.deepLearningManager);
+				this.deepLearningPanel = new DeepLearningPanel(this.projectManager, this.deepLearningManager, featureManager);
 			}
 			SwingUtilities.invokeLater(this.deepLearningPanel);
 		}

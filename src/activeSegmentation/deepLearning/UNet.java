@@ -85,18 +85,13 @@ public class UNet {
         dataTrainIter.setPreProcessor(scaler);
         scaler.fit(dataTestIter);
         dataTestIter.setPreProcessor(scaler);
+
 //        for (ImageTransform transform : transforms) {
 //            rrTrain.initialize(train, transform);
 //        }
 
         UNet un=new UNet();
         ComputationGraph cp = un.init();
-
-//        ComputationGraphConfiguration.GraphBuilder graph = un.graphBuilder();
-//        graph.addInputs("input").setInputTypes(InputType.convolutional(512,512,3));
-//        ComputationGraphConfiguration net = graph.build();
-//        ComputationGraph gr = new ComputationGraph(net);
-//        gr.init();
         System.out.println(cp.summary());
         cp.fit(dataTrainIter, epochs);
         int j = 0;

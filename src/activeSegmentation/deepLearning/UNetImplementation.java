@@ -1,6 +1,8 @@
 package activeSegmentation.deepLearning;
 
+import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
+import activeSegmentation.prj.ProjectInfo;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
@@ -41,7 +43,8 @@ public class UNetImplementation implements IDeepLearning {
     private static int width = 512;
     private static int height = 512;
     private static int channels = 3;
-    public static final String dataPath = "/home/jstachera/Documents/data";
+    private static ProjectInfo projectInfo;
+    public static final String dataPath = projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR);
 
 
 

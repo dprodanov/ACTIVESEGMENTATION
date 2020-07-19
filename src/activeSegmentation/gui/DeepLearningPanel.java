@@ -8,6 +8,7 @@ import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.util.GuiUtil;
+import org.apache.commons.io.FileUtils;
 import weka.core.OptionHandler;
 import weka.gui.GenericObjectEditor;
 
@@ -18,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 
 public class DeepLearningPanel extends Component implements Runnable, ASCommon, ActionListener, PropertyChangeListener {
     private JList<String> modelList;
@@ -121,7 +123,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JPanel parametersPanel = new JPanel();
         parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
         parametersPanel.setBounds(370, 20, 200, 100);
-SAVE
+
         JLabel learningRateLabel = new JLabel("Learning rate:");
         JLabel numEpochsLabel = new JLabel("Number of epochs:");
         JLabel batchSizeLabel = new JLabel("Batch size:");
@@ -158,7 +160,11 @@ SAVE
         fc.setSize(700,500);
         JButton openButton = new JButton("Import labels");
         openButton.addActionListener(e -> {
-            selectFile();
+            try {
+                selectFile();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         JButton featureButton = new JButton("Create labels");
         featureButton.addActionListener(e ->{
@@ -207,12 +213,15 @@ SAVE
 //    }
 
 
-    public void selectFile() {
+    public void selectFile() throws IOException {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
-            System.out.println(f.getName());
+            File f = chooser.getCurrentDirectory();
+            System.out.println(f);
+            File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
+            System.out.println(m);
+            FileUtils.copyDirectory(f, m);
         } else {
             System.out.println("doesnt work");
         }

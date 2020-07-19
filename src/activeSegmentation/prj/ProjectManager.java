@@ -1,42 +1,28 @@
 package activeSegmentation.prj;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.WindowManager;
-import ij.process.ImageProcessor;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import activeSegmentation.ASCommon;
+import activeSegmentation.IDataSet;
+import activeSegmentation.ProjectType;
+import activeSegmentation.learning.WekaDataSet;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.WindowManager;
+import ij.process.ImageProcessor;
+import weka.core.Instances;
+
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //import activeSegmentation.IProjectManager;
-import activeSegmentation.ASCommon;
-import activeSegmentation.IDataSet;
-import activeSegmentation.ProjectType;
-import activeSegmentation.learning.WekaDataSet;
-import weka.core.Instances;
 
 public class ProjectManager {
 
@@ -305,6 +291,7 @@ public class ProjectManager {
 		projectDir.put(ASCommon.LEARNINGDIR, projectString+"/learning/");
 		projectDir.put(ASCommon.EVALUATIONDIR,projectString+"/evaluation/");
 		projectDir.put(ASCommon.IMAGESDIR,projectString+"/images/");
+		projectDir.put(ASCommon.DEEPLEARNINGDIR,projectString+"/deeplearning/");
 	}
 	
 	private void createProjectSpace(String projectDirectory, String projectName) {
@@ -316,6 +303,7 @@ public class ProjectManager {
 		createDirectory(projectDir.get(ASCommon.LEARNINGDIR));
 		createDirectory(projectDir.get(ASCommon.EVALUATIONDIR));
 		createDirectory(projectDir.get(ASCommon.IMAGESDIR));
+		createDirectory(projectDir.get(ASCommon.DEEPLEARNINGDIR));
 		IJ.log("DONE");
 	}
 	

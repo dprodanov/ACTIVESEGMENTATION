@@ -92,7 +92,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         this.frame.setDefaultCloseOperation(1);
         this.frame.getContentPane().setBackground(Color.GRAY);
         this.frame.setLocationRelativeTo(null);
-        this.frame.setSize(800, 550);
+        this.frame.setSize(750, 400);
         JPanel learningP = new JPanel();
         learningP.setLayout(null);
         learningP.setBackground(Color.GRAY);
@@ -116,12 +116,12 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JPanel resetJPanel = new JPanel();
         resetJPanel.setBackground(Color.GRAY);
         resetJPanel.setBounds(370, 120, 200, 80);
-        resetJPanel.add(addButton("SAVE", null, 500, 120, 200, 50, this.SAVE_BUTTON_PRESSED));
+        resetJPanel.add(addButton("SAVE", null, 600, 500, 200, 50, this.SAVE_BUTTON_PRESSED));
 
         JPanel parametersPanel = new JPanel();
         parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
         parametersPanel.setBounds(370, 20, 200, 100);
-
+SAVE
         JLabel learningRateLabel = new JLabel("Learning rate:");
         JLabel numEpochsLabel = new JLabel("Number of epochs:");
         JLabel batchSizeLabel = new JLabel("Batch size:");
@@ -180,7 +180,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         }
         importLabels.add(buttonPanel);
 //        importLabels.add(fc);
-        importLabels.setBounds(400, 150, 300, 100);
+        importLabels.setBounds(370, 150, 300, 100);
 
         learningP.add(importLabels);
         learningP.add(parametersPanel);

@@ -37,6 +37,10 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     JFileChooser fc;
     FeaturePanel featurePanel;
     FeatureManager featureManager;
+    int overlayOpacity = 33;
+
+    Composite overlayAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, overlayOpacity / 100f);
+
 
 
     public DeepLearningPanel(ProjectManager projectManager, DeepLearningManager deepLearningManager, FeatureManager featureManager)  {
@@ -162,6 +166,9 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         openButton.addActionListener(e -> {
             try {
                 selectFile();
+                ImageOverlay io = new ImageOverlay();
+                io.setComposite( overlayAlpha );
+
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

@@ -20,15 +20,11 @@
 package activeSegmentation.gui;
 
 
+import activeSegmentation.gui.OverlayedImageCanvas.Overlay;
 import ij.process.ImageProcessor;
 
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
-
-import activeSegmentation.gui.OverlayedImageCanvas.Overlay;
 
 /**
  * This class implements an overlay based on an image.
@@ -48,6 +44,7 @@ public class ImageOverlay implements Overlay{
 		this.imp = imp;
 	}
 	
+
 	//@Override
 	public void paint(Graphics g, int x, int y, double magnification) {
 		if ( null == this.imp )

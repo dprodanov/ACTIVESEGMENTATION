@@ -12,10 +12,12 @@ import org.apache.commons.io.FileUtils;
 import weka.core.OptionHandler;
 import weka.gui.GenericObjectEditor;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -227,12 +229,61 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
             File f = chooser.getSelectedFile();
             File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
             new File(m+"/labels").mkdirs();
-            FileUtils.copyDirectory(f, new File(m+"/labels"));
-            FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), new File(m+"/images"));
+            File images = new File (m+"/images");
+            File labels = new File(m+"/labels");
+            String imagesPath = images.getPath();
+            String labelPath = labels.getPath();
+            FileUtils.copyDirectory(f, labels);
+            FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), images);
+            File[] imagesArr = images.listFiles();
+            for (int i = 0; i < imagesArr.length; i++){
+                imagesArr[i].renameTo(new File(images +"/" + i));
+            }
+            File[] labelsArr = labels.listFiles();
+            for (int i = 0; i < labelsArr.length; i++){
+                labelsArr[i].renameTo(new File(labels +"/"+ i));
+            }
+            for (int i = 0; i < imagesArr.length; i++) {
+                System.out.println(imagesPath+"/"+i);
+                BufferedImage bgImage = readImage(imagesPath+"/"+i);
+                BufferedImage fgImage = readImage(labelPath+"/"+i);
+                overLay(bgImage,fgImage);
+            }
         } else {
             System.out.println("doesnt work");
         }
     }
+    public BufferedImage overLay(BufferedImage bgImage, BufferedImage fgImage){
+
+        Graphics2D g = bgImage.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        float alpha = 0.33f;
+        g.setComposite(AlphaComposite.SrcOver);
+        g.drawImage(bgImage, 0, 0, null);
+        g.setComposite(AlphaComposite.SrcOver.derive(alpha));
+        g.drawImage(fgImage, 0, 0, null);
+
+        g.dispose();
+        JPanel gui = new JPanel(new GridLayout(1, 0, 5, 5));
+
+        gui.add(new JLabel(new ImageIcon(bgImage)));
+        gui.add(new JLabel(new ImageIcon(fgImage)));
+        JOptionPane.showMessageDialog(null, gui);
+        return bgImage;
+    }
+
+    public static BufferedImage readImage(String fileLocation) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(fileLocation));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return img;
+    }
+
 
     private IDeepLearning setClassifier()
     {

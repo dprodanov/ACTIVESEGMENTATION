@@ -224,11 +224,11 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getCurrentDirectory();
-            System.out.println(f);
+            File f = chooser.getSelectedFile();
             File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
-            System.out.println(m);
-            FileUtils.copyDirectory(f, m);
+            new File(m+"/labels").mkdirs();
+            FileUtils.copyDirectory(f, new File(m+"/labels"));
+            FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), new File(m+"/images"));
         } else {
             System.out.println("doesnt work");
         }

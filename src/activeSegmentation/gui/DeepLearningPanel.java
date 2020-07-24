@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class DeepLearningPanel extends Component implements Runnable, ASCommon, ActionListener, PropertyChangeListener {
     private JList<String> modelList;
@@ -236,15 +237,17 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
             FileUtils.copyDirectory(f, labels);
             FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), images);
             File[] imagesArr = images.listFiles();
+            File[] labelsArr = labels.listFiles();
+            Arrays.sort(imagesArr);
+            Arrays.sort(labelsArr);
             for (int i = 0; i < imagesArr.length; i++){
                 imagesArr[i].renameTo(new File(images +"/" + i));
             }
-            File[] labelsArr = labels.listFiles();
+
             for (int i = 0; i < labelsArr.length; i++){
                 labelsArr[i].renameTo(new File(labels +"/"+ i));
             }
             for (int i = 0; i < imagesArr.length; i++) {
-                System.out.println(imagesPath+"/"+i);
                 BufferedImage bgImage = readImage(imagesPath+"/"+i);
                 BufferedImage fgImage = readImage(labelPath+"/"+i);
                 overLay(bgImage,fgImage);

@@ -1,13 +1,14 @@
 package activeSegmentation.deepLearning;
 
 import activeSegmentation.ASCommon;
-import activeSegmentation.IDeepLearning;
 import activeSegmentation.prj.ProjectInfo;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.split.FileSplit;
+import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.NativeImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.common.resources.DL4JResources;
@@ -33,7 +34,7 @@ import java.io.IOException;
 import java.util.Random;
 
 
-public class UNetImplementation implements IDeepLearning {
+public class UNetImplementation {
     private static final int seed = 1234;
     private WeightInit weightInit = WeightInit.RELU;
     protected static Random rng = new Random(seed);
@@ -43,33 +44,38 @@ public class UNetImplementation implements IDeepLearning {
     private static int width = 512;
     private static int height = 512;
     private static int channels = 3;
-    private static ProjectInfo projectInfo;
-    public static final String dataPath = projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR);
+    private ProjectInfo projectInfo;
+    public String dataPath;
+
+    public UNetImplementation(ProjectInfo projectInfo) {
+        this.projectInfo = projectInfo;
+    }
+
+    public void importData(double proportion) throws IOException {
+        dataPath = projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR);
+        LabelGenerator labelMaker = new LabelGenerator(dataPath + "labels");
+        File mainPath = new File(dataPath+"images");
+        FileSplit fileSplit = new FileSplit(mainPath, NativeImageLoader.ALLOWED_FORMATS, rng);
+        int numExamples = Math.toIntExact(fileSplit.length());
+        int numLabels = fileSplit.getRootDir().listFiles(File::isDirectory).length;
+        BalancedPathFilter pathFilter = new BalancedPathFilter(rng, labelMaker, numExamples, numLabels, 1);
+
+        InputSplit[] inputSplit = fileSplit.sample(pathFilter, proportion, 1 - proportion);
+        InputSplit trainData = inputSplit[0];
+        InputSplit testData = inputSplit[1];
 
 
 
-    public void importData() throws IOException {
-        File trainData = new File(dataPath + "/train/image");
-        File testData = new File(dataPath + "/test/image");
+        ImageRecordReader rrTrain = new ImageRecordReader(height, width, channels, labelMaker);
+        rrTrain.initialize(trainData, null);
 
-        LabelGenerator labelMakerTrain = new LabelGenerator(dataPath + "/train");
-        LabelGenerator labelMakerTest = new LabelGenerator(dataPath + "/test");
-
-        FileSplit train = new FileSplit(trainData, NativeImageLoader.ALLOWED_FORMATS, rng);
-        FileSplit test = new FileSplit(testData, NativeImageLoader.ALLOWED_FORMATS, rng);
-
-
-        ImageRecordReader rrTrain = new ImageRecordReader(height, width, channels, labelMakerTrain);
-        rrTrain.initialize(train, null);
-
-        ImageRecordReader rrTest = new ImageRecordReader(height, width, channels, labelMakerTest);
-        rrTest.initialize(test, null);
+        ImageRecordReader rrTest = new ImageRecordReader(height, width, channels, labelMaker);
+        rrTest.initialize(testData, null);
 
         int labelIndex = 1;
         DataSetIterator dataTrainIter = new RecordReaderDataSetIterator(rrTrain, batchSize, labelIndex, labelIndex, true);
         DataSetIterator dataTestIter = new RecordReaderDataSetIterator(rrTest, 1, labelIndex, labelIndex, true);
-    }
-    public ComputationGraph buildModel(DataSetIterator dataTrainIter, DataSetIterator dataTestIter) throws IOException {
+
         DL4JResources.setBaseDownloadURL("https://dl4jdata.blob.core.windows.net/");
         ZooModel zooModel = UNet.builder().build();
         ComputationGraph pretrainedNet = (ComputationGraph) zooModel.initPretrained(PretrainedType.SEGMENT);
@@ -91,17 +97,10 @@ public class UNetImplementation implements IDeepLearning {
                                 .activation(Activation.SIGMOID).build(), "conv2d_23")
                 .build();
 
-        System.out.println(unetTransfer.summary());
 
         unetTransfer.init();
         System.out.println(unetTransfer.summary());
-        return unetTransfer;
-    }
-    public void train(ComputationGraph unetTransfer, DataSetIterator dataTrainIter) {
             unetTransfer.fit(dataTrainIter, epochs);
-
-    }
-    public double[] evaluate(DataSetIterator dataTestIter, NormalizerMinMaxScaler scaler, ComputationGraph unetTransfer){
 
             DataSet t = dataTestIter.next();
             scaler.revert(t);
@@ -117,9 +116,8 @@ public class UNetImplementation implements IDeepLearning {
             int j = 0;
             //segmented image instance
             ImagePlus classifiedImage = new ImagePlus("pred" + j, classifiedSliceProcessor);
-            IJ.save(classifiedImage, dataPath + "/predict/pred-" + j + ".png");
+            IJ.save(classifiedImage, dataPath + "/predictions/"+ j + ".png");
             j++;
-            return classificationResult;
         }
         public String toString(ComputationGraph uNet){
             return uNet.summary();

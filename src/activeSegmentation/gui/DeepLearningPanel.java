@@ -54,19 +54,24 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         this.modelList = GuiUtil.model();
     }
 
-    public void doAction(ActionEvent event)  {
+    public void doAction(ActionEvent event) throws IOException {
         if (event == this.SAVE_BUTTON_PRESSED)     {
+            System.out.println(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
+            UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
+            uNetImplementation.importData(0.2);
+
+
             //System.out.println(this.featureSelList.getSelectedIndex());
-            this.projectInfo.setFeatureSelection((String)this.featureSelList.getSelectedValue());
-
-            // System.out.println("in set classifiler");
-            IDeepLearning testClassifier=setClassifier();
-
-            if(testClassifier!=null) {
-                IDeepLearning deepModel = new UNetImplementation();
-                this.deepLearningManager.setClassifier(deepModel);
-                this.projectManager.updateMetaInfo(this.projectInfo);
-            }
+//            this.projectInfo.setFeatureSelection((String)this.featureSelList.getSelectedValue());
+//
+//            // System.out.println("in set classifiler");
+//            IDeepLearning testClassifier=setClassifier();
+//
+//            if(testClassifier!=null) {
+//                IDeepLearning deepModel = new UNetImplementation();
+//                this.deepLearningManager.setClassifier(deepModel);
+//                this.projectManager.updateMetaInfo(this.projectInfo);
+//            }
 
         }
     }
@@ -169,7 +174,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JButton openButton = new JButton("Import labels");
         openButton.addActionListener(e -> {
             try {
-                selectFile();
+                selectFile(0.8);
                 ImageOverlay io = new ImageOverlay();
                 io.setComposite( overlayAlpha );
 
@@ -180,6 +185,9 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JButton featureButton = new JButton("Create labels");
         featureButton.addActionListener(e ->{
             new FeaturePanelNew(featureManager);
+
+            new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR) + "/labels").mkdirs();
+            projectInfo.getProjectDirectory().get(ASCommon.FEATURESDIR);
         });
 
         fc.setVisible(true);
@@ -235,7 +243,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 //    }
 
 
-    public void selectFile() throws IOException {
+    public void selectFile(double percentage) throws IOException {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -263,7 +271,28 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
                 BufferedImage bgImage = readImage(imagesPath+"/"+i);
                 BufferedImage fgImage = readImage(labelPath+"/"+i);
                 overLay(bgImage,fgImage);
+
             }
+            new File(m+"/train").mkdirs();
+            new File(m+"/test").mkdirs();
+            new File(m+"/train/images").mkdirs();
+            new File(m+"/test/images").mkdirs();
+            new File(m+"/train/labels").mkdirs();
+            new File(m+"/test/labels").mkdirs();
+
+            int index = (int) (imagesArr.length*percentage);
+            for (int j = 0; j < index; j++){
+                FileUtils.copyFileToDirectory(imagesArr[j], new File(m+"/train/images"));
+                FileUtils.copyFileToDirectory(labelsArr[j], new File(m+"/train/labels"));
+
+            }
+            for (int g = index; g < imagesArr.length ; g++){
+                FileUtils.copyFileToDirectory(imagesArr[g], new File(m+"/test/images"));
+                FileUtils.copyFileToDirectory(labelsArr[g], new File(m+"/test/labels"));
+            }
+            new File(m+"/images").delete();
+            new File(m+"/labels").delete();
+
         } else {
             System.out.println("doesnt work");
         }
@@ -334,6 +363,17 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         button.setBackground(new Color(192, 192, 192));
         button.setForeground(Color.WHITE);
         button.setBounds(x, y, width, height);
+        button.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try {
+                    DeepLearningPanel.this.doAction(SAVE_BUTTON_PRESSED);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
         return button;
     }
 

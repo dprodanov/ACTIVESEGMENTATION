@@ -7,7 +7,7 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import java.io.IOException;
 
 public interface IDeepLearning {
-    public void importData() throws IOException;
+    public void importData(double proportion) throws IOException;
 
     public void train(ComputationGraph unetTransfer, DataSetIterator dataTrainIter);
 

@@ -15,7 +15,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class DeepLearningManager {
 
-    private IDeepLearning model = new UNetImplementation();
+
     Map<String,IClassifier> classifierMap= new HashMap<String, IClassifier>();
     private ProjectManager dataManager;
     private ProjectInfo metaInfo;
@@ -24,6 +24,7 @@ public class DeepLearningManager {
     private IDataSet dataset;
     private ForkJoinPool pool;
     private Map<String, IFeatureSelection> featureMap;
+    private UNetImplementation model = new UNetImplementation(null);
 
     public DeepLearningManager(ProjectManager dataManager){
         learningList= new ArrayList<String>();
@@ -66,7 +67,7 @@ public class DeepLearningManager {
             //System.out.println("writing file");
             //dataManager.writeDataToARFF(dataset.getDataset(), "\\test-eigen\\Training\\learning\\training1.arff");
 
-            model.train(uNet, dataTrainIter);
+//            model.train(uNet, dataTrainIter);
             //
             //System.out.println("Training Results");
             System.out.println(model.toString());
@@ -101,9 +102,9 @@ public class DeepLearningManager {
 
     //@Override
     public void setClassifier(IDeepLearning deepLearningModel) {
-        //System.out.println(classifier.toString());
-        model = deepLearningModel;
-        System.out.println(model.toString());
+//        //System.out.println(classifier.toString());
+//        model = deepLearningModel;
+//        System.out.println(model.toString());
 
     }
 
@@ -118,7 +119,7 @@ public class DeepLearningManager {
     //	@Override
     public double[] predict(DataSetIterator dataTestIter, NormalizerMinMaxScaler scaler, ComputationGraph unettransfer) {
         try {
-            return model.evaluate(dataTestIter, scaler, unettransfer);
+//            return model.evaluate(dataTestIter, scaler, unettransfer);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

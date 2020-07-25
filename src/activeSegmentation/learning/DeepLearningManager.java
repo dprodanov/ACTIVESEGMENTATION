@@ -107,20 +107,6 @@ public class DeepLearningManager {
 
     }
 
-    // @Override
-//    public double[] applyClassifier(IDataSet dataSet){
-//        //System.out.println("Testing Results");
-//        //	System.out.println("INSTANCE SIZE"+ dataSet.getNumInstances());
-//        //	System.out.println("WORK LOAD : "+ Common.WORKLOAD);
-//        double[] classificationResult = new double[dataSet.getNumInstances()];
-//        ApplyTask applyTask= new ApplyTask(dataSet, 0, dataSet.getNumInstances(),
-//                classificationResult, model);
-//        pool.invoke(applyTask);
-//
-//
-//        return classificationResult;
-//    }
-
 
     //	@Override
     public Set<String> getFeatureSelList() {

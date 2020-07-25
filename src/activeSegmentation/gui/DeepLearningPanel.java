@@ -33,7 +33,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     private ProjectInfo projectInfo;
     final JFrame frame = new JFrame("DEEP LEARNING");
     JList<String> featureSelList;
-    final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent(this, 1, "Save");
+    final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent(this, 1, "Train");
     DeepLearningManager deepLearningManager;
     Button openButton;
     Button featureButton;
@@ -124,12 +124,12 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         options.add(transferLearning);
         JPanel resetJPanel = new JPanel();
         resetJPanel.setBackground(Color.GRAY);
-        resetJPanel.setBounds(370, 120, 200, 80);
-        resetJPanel.add(addButton("SAVE", null, 600, 500, 200, 50, this.SAVE_BUTTON_PRESSED));
+        resetJPanel.setBounds(370, 250, 200, 150);
+        resetJPanel.add(addButton("TRAIN", null, 600, 500, 300, 50, this.SAVE_BUTTON_PRESSED));
 
         JPanel parametersPanel = new JPanel();
         parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
-        parametersPanel.setBounds(370, 20, 200, 100);
+        parametersPanel.setBounds(370, 20, 300, 100);
 
         JLabel learningRateLabel = new JLabel("Learning rate:");
         JLabel numEpochsLabel = new JLabel("Number of epochs:");
@@ -160,11 +160,12 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         parametersPanel.add(batchSizeLabel);
         parametersPanel.add(batchSize);
 
+
         JPanel importLabels = new JPanel();
         importLabels.setBorder(BorderFactory.createTitledBorder("Import labels"));
         JFileChooser fc = new JFileChooser();
         fc.setLayout(new BorderLayout());
-        fc.setSize(700,500);
+        fc.setSize(800,500);
         JButton openButton = new JButton("Import labels");
         openButton.addActionListener(e -> {
             try {
@@ -198,11 +199,22 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 //        importLabels.add(fc);
         importLabels.setBounds(370, 150, 300, 100);
 
+
+        JPanel dataAugmentationPanel = new JPanel();
+        dataAugmentationPanel.setBorder(BorderFactory.createTitledBorder("Data augmentation:"));
+        dataAugmentationPanel.setBounds(30, 230, 250, 80);
+
+        Checkbox flip = new Checkbox("Flip");
+        Checkbox otherTransform = new Checkbox("Something else");
+        dataAugmentationPanel.add(flip);
+        dataAugmentationPanel.add(otherTransform);
+
         learningP.add(importLabels);
         learningP.add(parametersPanel);
         learningP.add(learningJPanel);
         learningP.add(resetJPanel);
         learningP.add(options);
+        learningP.add(dataAugmentationPanel);
 
 
         this.frame.add(learningP);

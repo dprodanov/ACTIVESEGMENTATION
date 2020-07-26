@@ -56,7 +56,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
     public void doAction(ActionEvent event) throws IOException {
         if (event == this.SAVE_BUTTON_PRESSED)     {
-            System.out.println(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
             UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
             uNetImplementation.importData(0.2);
 
@@ -249,49 +248,57 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
             File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
-            new File(m+"/labels").mkdirs();
-            File images = new File (m+"/images");
-            File labels = new File(m+"/labels");
+            new File(m+"/label").mkdirs();
+            File images = new File (m+"/image");
+            File labels = new File(m+"/label");
             String imagesPath = images.getPath();
             String labelPath = labels.getPath();
             FileUtils.copyDirectory(f, labels);
             FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), images);
+            System.out.println(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR));
             File[] imagesArr = images.listFiles();
             File[] labelsArr = labels.listFiles();
             Arrays.sort(imagesArr);
             Arrays.sort(labelsArr);
             for (int i = 0; i < imagesArr.length; i++){
-                imagesArr[i].renameTo(new File(images +"/" + i));
+                imagesArr[i].renameTo(new File(images +"/" + i + ".png"));
+
             }
 
-            for (int i = 0; i < labelsArr.length; i++){
-                labelsArr[i].renameTo(new File(labels +"/"+ i));
+            for (int l = 0; l < labelsArr.length; l++){
+                labelsArr[l].renameTo(new File(labels +"/"+ l + ".png"));
             }
-            for (int i = 0; i < imagesArr.length; i++) {
-                BufferedImage bgImage = readImage(imagesPath+"/"+i);
-                BufferedImage fgImage = readImage(labelPath+"/"+i);
+            for (int c = 0; c < imagesArr.length; c++) {
+                BufferedImage bgImage = readImage(imagesPath+"/"+c + ".png");
+                BufferedImage fgImage = readImage(labelPath+"/"+c + ".png");
+
                 overLay(bgImage,fgImage);
 
             }
             new File(m+"/train").mkdirs();
             new File(m+"/test").mkdirs();
-            new File(m+"/train/images").mkdirs();
-            new File(m+"/test/images").mkdirs();
-            new File(m+"/train/labels").mkdirs();
-            new File(m+"/test/labels").mkdirs();
+            new File(m+"/train/image").mkdirs();
+            new File(m+"/test/image").mkdirs();
+            new File(m+"/train/label").mkdirs();
+            new File(m+"/test/label").mkdirs();
 
             int index = (int) (imagesArr.length*percentage);
             for (int j = 0; j < index; j++){
-                FileUtils.copyFileToDirectory(imagesArr[j], new File(m+"/train/images"));
-                FileUtils.copyFileToDirectory(labelsArr[j], new File(m+"/train/labels"));
+                FileUtils.copyFileToDirectory(new File(images + "/" + j + ".png"), new File(m+"/train/image"));
+
+            }
+            for (int j = 0; j < index; j++){
+                FileUtils.copyFileToDirectory(new File(labels + "/" + j+ ".png"), new File(m+"/train/label"));
 
             }
             for (int g = index; g < imagesArr.length ; g++){
-                FileUtils.copyFileToDirectory(imagesArr[g], new File(m+"/test/images"));
-                FileUtils.copyFileToDirectory(labelsArr[g], new File(m+"/test/labels"));
+                FileUtils.copyFileToDirectory(new File(images + "/" + g+ ".png"), new File(m+"/test/image"));
             }
-            new File(m+"/images").delete();
-            new File(m+"/labels").delete();
+            for (int g = index; g < imagesArr.length ; g++){
+                FileUtils.copyFileToDirectory(new File(labels + "/" + g+ ".png"), new File(m+"/test/label"));
+            }
+            new File(m+"/image").delete();
+            new File(m+"/label").delete();
 
         } else {
             System.out.println("doesnt work");

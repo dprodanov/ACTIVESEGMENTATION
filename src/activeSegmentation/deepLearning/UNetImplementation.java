@@ -6,9 +6,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.split.FileSplit;
-import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.NativeImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.common.resources.DL4JResources;
@@ -52,31 +50,29 @@ public class UNetImplementation {
     }
 
     public void importData(double proportion) throws IOException {
+        DL4JResources.setBaseDownloadURL("https://dl4jdata.blob.core.windows.net/");
         dataPath = projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR);
-        LabelGenerator labelMaker = new LabelGenerator(dataPath + "labels");
-        File mainPath = new File(dataPath+"images");
-        FileSplit fileSplit = new FileSplit(mainPath, NativeImageLoader.ALLOWED_FORMATS, rng);
-        int numExamples = Math.toIntExact(fileSplit.length());
-        int numLabels = fileSplit.getRootDir().listFiles(File::isDirectory).length;
-        BalancedPathFilter pathFilter = new BalancedPathFilter(rng, labelMaker, numExamples, numLabels, 1);
+        File trainData = new File(dataPath + "/train/image");
+        File testData = new File(dataPath + "/test/image");
+        LabelGenerator labelMakerTrain = new LabelGenerator(dataPath + "/train");
+        LabelGenerator labelMakerTest = new LabelGenerator(dataPath + "/test");
 
-        InputSplit[] inputSplit = fileSplit.sample(pathFilter, proportion, 1 - proportion);
-        InputSplit trainData = inputSplit[0];
-        InputSplit testData = inputSplit[1];
+        FileSplit train = new FileSplit(trainData, NativeImageLoader.ALLOWED_FORMATS, rng);
+        FileSplit test = new FileSplit(testData, NativeImageLoader.ALLOWED_FORMATS, rng);
 
 
+        ImageRecordReader rrTrain = new ImageRecordReader(height, width, channels, labelMakerTrain);
+        rrTrain.initialize(train, null);
 
-        ImageRecordReader rrTrain = new ImageRecordReader(height, width, channels, labelMaker);
-        rrTrain.initialize(trainData, null);
-
-        ImageRecordReader rrTest = new ImageRecordReader(height, width, channels, labelMaker);
-        rrTest.initialize(testData, null);
+        ImageRecordReader rrTest = new ImageRecordReader(height, width, channels, labelMakerTest);
+        rrTest.initialize(test, null);
 
         int labelIndex = 1;
+
         DataSetIterator dataTrainIter = new RecordReaderDataSetIterator(rrTrain, batchSize, labelIndex, labelIndex, true);
         DataSetIterator dataTestIter = new RecordReaderDataSetIterator(rrTest, 1, labelIndex, labelIndex, true);
 
-        DL4JResources.setBaseDownloadURL("https://dl4jdata.blob.core.windows.net/");
+
         ZooModel zooModel = UNet.builder().build();
         ComputationGraph pretrainedNet = (ComputationGraph) zooModel.initPretrained(PretrainedType.SEGMENT);
         //System.out.println(pretrainedNet.summary());

@@ -1,6 +1,11 @@
 package activeSegmentation.gui;
 
 
+import activeSegmentation.ASCommon;
+import activeSegmentation.LearningType;
+import activeSegmentation.ProjectType;
+import activeSegmentation.feature.FeatureManager;
+import activeSegmentation.util.GuiUtil;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.ImageWindow;
@@ -10,52 +15,11 @@ import ij.gui.TextRoi;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
-import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import activeSegmentation.ASCommon;
- 
-import activeSegmentation.LearningType;
-import activeSegmentation.ProjectType;
-import activeSegmentation.feature.FeatureManager;
-import activeSegmentation.util.GuiUtil;
-
-import static  activeSegmentation.ProjectType.*;
+import java.util.*;
 
 public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 
@@ -109,6 +73,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	private ActionEvent TOGGLE_BUTTON_PRESSED = new ActionEvent( this, 7, "TOGGLE" );
 	private ActionEvent DOWNLOAD_BUTTON_PRESSED = new ActionEvent( this, 8, "DOWNLOAD" );
 	private ActionEvent MASKS_BUTTON_PRESSED = new ActionEvent( this, 8, "MASKS" );
+	private ActionEvent LABELS_UPLOAD = new ActionEvent( this, 8, "LABELS" );
  
 
 	private ImagePlus displayImage;
@@ -121,6 +86,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	private Map<String,JTextArea> jTextList;
 	private JComboBox<LearningType> learningType;
 	private JFrame frame;
+	private Button labels;
 
 	/*
 	 * constructor 
@@ -158,6 +124,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		imagePanel = new JPanel();	
 		roiPanel= new JPanel();
 		classPanel= new JPanel();
+		labels = new Button("Upload labels");
 		
 		/*
 		 * image panel
@@ -253,7 +220,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			}
 		});
 		
-		dataJPanel.setBounds(720,240,100,60);
+		dataJPanel.setBounds(700,240,100,60);
 		learningType.setSelectedIndex(0);
 		learningType.setFont( panelFONT );
 		learningType.setBackground(Color.GRAY);
@@ -262,6 +229,18 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		dataJPanel.setBackground(Color.GRAY);
 		
 		panel.add(dataJPanel);
+
+		/*
+		 * labels
+		 */
+
+		labels.setBounds(800,240,100,50);
+		learningType.setFont( panelFONT );
+		learningType.setBackground(Color.GRAY);
+		learningType.setForeground(Color.WHITE);
+
+		panel.add(labels);
+
 		
 		/*
 		 * ROI panel
@@ -533,6 +512,10 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			}
 			classifiedImage.show();
 			 
+		} //end if
+
+		if(event==LABELS_UPLOAD){
+			System.out.println("Labels uploaded");
 		} //end if
 		
 		if(event.getActionCommand()== "ColorButton"){	

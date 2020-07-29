@@ -38,7 +38,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     Button openButton;
     Button featureButton;
     JFileChooser fc;
-    FeaturePanel featurePanel;
     FeatureManager featureManager;
     int overlayOpacity = 33;
 

@@ -49,7 +49,7 @@ public class UNetImplementation {
         this.projectInfo = projectInfo;
     }
 
-    public void importData(double proportion) throws IOException {
+    public void importData() throws IOException {
         DL4JResources.setBaseDownloadURL("https://dl4jdata.blob.core.windows.net/");
         dataPath = projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR);
         File trainData = new File(dataPath + "/train/image");
@@ -96,8 +96,10 @@ public class UNetImplementation {
 
         unetTransfer.init();
         System.out.println(unetTransfer.summary());
-            unetTransfer.fit(dataTrainIter, epochs);
+        unetTransfer.fit(dataTrainIter, epochs);
 
+        int j = 0;
+        while (dataTestIter.hasNext()) {
             DataSet t = dataTestIter.next();
             scaler.revert(t);
             INDArray[] predicted = unetTransfer.output(t.getFeatures());
@@ -109,12 +111,13 @@ public class UNetImplementation {
             DataBuffer dataBuffer = pred.data();
             double[] classificationResult = dataBuffer.asDouble();
             ImageProcessor classifiedSliceProcessor = new FloatProcessor(512, 512, classificationResult);
-            int j = 0;
             //segmented image instance
             ImagePlus classifiedImage = new ImagePlus("pred" + j, classifiedSliceProcessor);
-            IJ.save(classifiedImage, dataPath + "/predictions/"+ j + ".png");
+            new File(dataPath + "/predictions/" + j + ".png").mkdirs();
+            IJ.save(classifiedImage, dataPath + "/predictions/" + j + ".png");
             j++;
         }
+    }
         public String toString(ComputationGraph uNet){
             return uNet.summary();
         }

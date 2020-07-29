@@ -56,7 +56,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     public void doAction(ActionEvent event) throws IOException {
         if (event == this.SAVE_BUTTON_PRESSED)     {
             UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
-            uNetImplementation.importData(0.2);
+            uNetImplementation.importData();
 
 
             //System.out.println(this.featureSelList.getSelectedIndex());

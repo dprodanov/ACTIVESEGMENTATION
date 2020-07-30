@@ -137,6 +137,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JLabel learningRateLabel = new JLabel("Learning rate:");
         JLabel numEpochsLabel = new JLabel("Number of epochs:");
         JLabel batchSizeLabel = new JLabel("Batch size:");
+        JLabel fileSplitLabel = new JLabel("Ratio of file split:");
 
 
         JFormattedTextField learningRate = new JFormattedTextField();
@@ -148,6 +149,9 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JFormattedTextField batchSize = new JFormattedTextField();
         batchSize.setColumns(2);
         batchSize.addPropertyChangeListener("value", this);
+        JFormattedTextField fileSplit = new JFormattedTextField();
+        fileSplit.setColumns(2);
+        fileSplit.addPropertyChangeListener("value", this);
 
 
 

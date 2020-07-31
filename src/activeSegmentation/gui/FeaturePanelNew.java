@@ -18,6 +18,7 @@ import ij.process.LUT;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
@@ -359,7 +360,11 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		 button.addActionListener( new ActionListener()	{
 			@Override
 			public void actionPerformed( final ActionEvent e )	{
-				doAction(action);
+				try {
+					doAction(action);
+				} catch (IOException ioException) {
+					ioException.printStackTrace();
+				}
 			}
 		} );
 	 
@@ -377,7 +382,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		frame.repaint();
 	}
 
-	public void doAction( final ActionEvent event ) {
+	public void doAction( final ActionEvent event ) throws IOException {
 		if(event== ADDCLASS_BUTTON_PRESSED){
 			featureManager.addClass();
 			addClassPanel();
@@ -748,7 +753,11 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			public void actionPerformed( final ActionEvent e )
 			{
 				//System.out.println(e.toString());
-				doAction(action);
+				try {
+					doAction(action);
+				} catch (IOException ioException) {
+					ioException.printStackTrace();
+				}
 			}
 		});
 

@@ -11,6 +11,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Roi;
+import ij.io.FileSaver;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -134,6 +135,10 @@ public class PixelInstanceCreator implements IFeature {
 					for(Roi roi:classInfo.getTrainingRois(image)) {
 						//new ImagePlus("test", featureStack).show();								
 						addRectangleRoiInstances( trainingData, index, featureStack, roi );
+						ImagePlus ip = roi.getImage();
+						FileSaver fs = new FileSaver(ip);
+						new File(ASCommon.DEEPLEARNINGDIR + "/labels").mkdirs();
+						fs.saveAsJpeg();
 					}
 					//IJ.log(trainingData.toString());
 					index++;

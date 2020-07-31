@@ -187,7 +187,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JButton featureButton = new JButton("Create labels");
         featureButton.addActionListener(e ->{
             new FeaturePanelNew(featureManager);
-
             new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR) + "/labels").mkdirs();
             projectInfo.getProjectDirectory().get(ASCommon.FEATURESDIR);
         });

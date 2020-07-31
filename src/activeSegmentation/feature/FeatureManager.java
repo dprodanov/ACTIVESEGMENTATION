@@ -1,13 +1,20 @@
 package activeSegmentation.feature;
 
+import activeSegmentation.*;
+import activeSegmentation.classif.RoiInstanceCreator;
+import activeSegmentation.learning.ClassifierManager;
+import activeSegmentation.prj.ClassInfo;
+import activeSegmentation.prj.FeatureInfo;
+import activeSegmentation.prj.ProjectInfo;
+import activeSegmentation.prj.ProjectManager;
+import activeSegmentation.util.GuiUtil;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Roi;
-import ij.gui.TextRoi;
+import ij.io.FileSaver;
 import ij.io.RoiDecoder;
 import ij.io.RoiEncoder;
-import ij.plugin.filter.RankFilters;
 import ij.plugin.frame.RoiManager;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
@@ -15,28 +22,13 @@ import weka.core.Instance;
 
 import java.awt.*;
 import java.io.*;
-import java.util.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import activeSegmentation.*;
-import activeSegmentation.classif.RoiInstanceCreator;
-import activeSegmentation.learning.ClassifierManager;
-import activeSegmentation.prj.*;
-import activeSegmentation.util.GuiUtil;
 
 /**
  * 
@@ -375,9 +367,17 @@ public class FeatureManager  {
 			featureInfo.setColor(classInfo.getColor().getRGB());
 			for (String imageKey : classInfo.getTrainingRoiSlices()) {
 				List<String> trainingRois = new ArrayList<String>();
+				ImagePlus ip = IJ.createImage("label", "8-bit white", 512, 512, 1);
 				for (Roi roi : classInfo.getTrainingRois(imageKey)) {
+					ip.setRoi(roi);
 					trainingRois.add(roi.getName());
+
 				}
+				ip.show();
+				ImagePlus dup = ip.duplicate();
+				FileSaver fs = new FileSaver(dup);
+				new File(ASCommon.DEEPLEARNINGDIR + "/labels").mkdirs();
+				fs.saveAsPng();
 				featureInfo.addTrainingRois(imageKey, trainingRois);
 				classRois.addAll(classInfo.getTrainingRois(imageKey));
 			}

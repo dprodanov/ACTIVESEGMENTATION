@@ -5,6 +5,8 @@ import activeSegmentation.ASCommon;
 import activeSegmentation.LearningType;
 import activeSegmentation.ProjectType;
 import activeSegmentation.feature.FeatureManager;
+import activeSegmentation.prj.ProjectInfo;
+import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.util.GuiUtil;
 import ij.IJ;
 import ij.ImagePlus;
@@ -14,10 +16,14 @@ import ij.gui.Roi;
 import ij.gui.TextRoi;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
+import org.apache.commons.io.FileUtils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
@@ -28,7 +34,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private FeatureManager featureManager;
 	/** opacity (in %) of the result overlay image */
 	int overlayOpacity = 33;
@@ -74,7 +80,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	private ActionEvent TOGGLE_BUTTON_PRESSED = new ActionEvent( this, 7, "TOGGLE" );
 	private ActionEvent DOWNLOAD_BUTTON_PRESSED = new ActionEvent( this, 8, "DOWNLOAD" );
 	private ActionEvent MASKS_BUTTON_PRESSED = new ActionEvent( this, 8, "MASKS" );
-	private ActionEvent LABELS_UPLOAD = new ActionEvent( this, 8, "LABELS" );
+	private ActionEvent LABELS_UPLOAD = new ActionEvent( this, 9, "LABELS" );
  
 
 	private ImagePlus displayImage;
@@ -125,8 +131,8 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		imagePanel = new JPanel();	
 		roiPanel= new JPanel();
 		classPanel= new JPanel();
-		labels = new Button("Upload labels");
-		
+//		labels = new Button("Upload labels");
+
 		/*
 		 * image panel
 		 */
@@ -136,7 +142,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		ic.setMinimumSize(new Dimension(IMAGE_CANVAS_DIMENSION, IMAGE_CANVAS_DIMENSION));
 		loadImage(displayImage);
 		setOverlay();
-		imagePanel.setBackground(Color.GRAY);		
+		imagePanel.setBackground(Color.GRAY);
 		imagePanel.add(ic,BorderLayout.CENTER);
 		imagePanel.setBounds( 10, 10, IMAGE_CANVAS_DIMENSION, IMAGE_CANVAS_DIMENSION );		
 		panel.add(imagePanel);
@@ -192,6 +198,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		addButton(new JButton(), "Save",null, 550,550,350,100,computePanel, SAVE_BUTTON_PRESSED,null);
 		addButton(new JButton(), "Overlay",null, 550,550,350,100,computePanel, TOGGLE_BUTTON_PRESSED,null);
 		addButton(new JButton(), "Masks",null, 550,550,350,100,computePanel, MASKS_BUTTON_PRESSED,null);
+		addButton(new JButton(), "Labels", null, 800,240,100,50, computePanel, LABELS_UPLOAD, null);
 		
 		features.add(computePanel);
 		frame.add(features);
@@ -235,12 +242,13 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		 * labels
 		 */
 
-		labels.setBounds(800,240,100,50);
-		learningType.setFont( panelFONT );
-		learningType.setBackground(Color.GRAY);
-		learningType.setForeground(Color.WHITE);
-
-		panel.add(labels);
+//		labels.setBounds(800,240,100,50);
+//		labels.setForeground(Color.white);
+//		learningType.setFont( panelFONT );
+//		learningType.setBackground(Color.GRAY);
+//		learningType.setForeground(Color.WHITE);
+//
+//		panel.add(labels);
 
 		
 		/*
@@ -521,6 +529,8 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 
 		if(event==LABELS_UPLOAD){
 			System.out.println("Labels uploaded");
+			selectFile(0.8);
+
 		} //end if
 		
 		if(event.getActionCommand()== "ColorButton"){	
@@ -795,6 +805,85 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			featureManager.uploadExamples(fileChooser.getSelectedFile().toString(),key,type, featureManager.getCurrentSlice());
 		}
+	}
+
+	public void selectFile(double percentage) throws IOException {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File f = chooser.getSelectedFile();
+			ProjectManager projectManager = new ProjectManager();
+			ProjectInfo projectInfo = projectManager.getMetaInfo();
+			File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
+			new File(m+"/label").mkdirs();
+			File images = new File (m+"/image");
+			File labels = new File(m+"/label");
+			String imagesPath = images.getPath();
+			String labelPath = labels.getPath();
+			FileUtils.copyDirectory(f, labels);
+			FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), images);
+			System.out.println(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR));
+			File[] imagesArr = images.listFiles();
+			File[] labelsArr = labels.listFiles();
+			Arrays.sort(imagesArr);
+			Arrays.sort(labelsArr);
+			for (int i = 0; i < imagesArr.length; i++) {
+				imagesArr[i].renameTo(new File(images + "/" + i + ".png"));
+			}
+			for (int l = 0; l < labelsArr.length; l++){
+				labelsArr[l].renameTo(new File(labels +"/"+ l + ".png"));
+			}
+
+			for (int c = 0; c < imagesArr.length; c++) {
+				BufferedImage bgImage = readImage(imagesPath+"/"+c + ".png");
+				BufferedImage fgImage = readImage(labelPath+"/"+c + ".png");
+				ImagePlus imagePlus = new ImagePlus("label", fgImage);
+				ImageProcessor overlay = imagePlus.getProcessor();
+				overlay = overlay.convertToByte(false);
+				setLut(featureManager.getColors());
+				overlay.setColorModel(overlayLUT);
+				resultOverlay.setImage(overlay);
+				displayImage.updateAndDraw();
+			}
+
+			new File(m+"/train").mkdirs();
+			new File(m+"/test").mkdirs();
+			new File(m+"/train/image").mkdirs();
+			new File(m+"/test/image").mkdirs();
+			new File(m+"/train/label").mkdirs();
+			new File(m+"/test/label").mkdirs();
+
+			int index = (int) (imagesArr.length*percentage);
+			for (int j = 0; j < index; j++){
+				FileUtils.copyFileToDirectory(new File(images + "/" + j + ".png"), new File(m+"/train/image"));
+
+			}
+			for (int j = 0; j < index; j++){
+				FileUtils.copyFileToDirectory(new File(labels + "/" + j+ ".png"), new File(m+"/train/label"));
+
+			}
+			for (int g = index; g < imagesArr.length ; g++){
+				FileUtils.copyFileToDirectory(new File(images + "/" + g+ ".png"), new File(m+"/test/image"));
+			}
+			for (int g = index; g < imagesArr.length ; g++){
+				FileUtils.copyFileToDirectory(new File(labels + "/" + g+ ".png"), new File(m+"/test/label"));
+			}
+			new File(m+"/image").delete();
+			new File(m+"/label").delete();
+
+		} else {
+			System.out.println("doesnt work");
+		}
+	}
+
+	public static BufferedImage readImage(String fileLocation) {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(fileLocation));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return img;
 	}
 
 

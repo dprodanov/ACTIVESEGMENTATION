@@ -370,12 +370,12 @@ public class FeatureManager  {
 				ImagePlus ip = IJ.createImage("label", "8-bit white", 512, 512, 1);
 				for (Roi roi : classInfo.getTrainingRois(imageKey)) {
 					ip.setRoi(roi);
+					ip.draw();
 					trainingRois.add(roi.getName());
-
 				}
 				ip.show();
 				ImagePlus dup = ip.duplicate();
-				FileSaver fs = new FileSaver(dup);
+				FileSaver fs = new FileSaver(ip);
 				new File(ASCommon.DEEPLEARNINGDIR + "/labels").mkdirs();
 				fs.saveAsPng();
 				featureInfo.addTrainingRois(imageKey, trainingRois);

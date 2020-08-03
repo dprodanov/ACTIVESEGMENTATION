@@ -8,7 +8,6 @@ import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.util.GuiUtil;
-import org.apache.commons.io.FileUtils;
 import weka.core.OptionHandler;
 import weka.gui.GenericObjectEditor;
 
@@ -22,7 +21,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class DeepLearningPanel extends Component implements Runnable, ASCommon, ActionListener, PropertyChangeListener {
     private JList<String> modelList;
@@ -173,17 +171,17 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JFileChooser fc = new JFileChooser();
         fc.setLayout(new BorderLayout());
         fc.setSize(800,500);
-        JButton openButton = new JButton("Import labels");
-        openButton.addActionListener(e -> {
-            try {
-                selectFile(0.8);
-                ImageOverlay io = new ImageOverlay();
-                io.setComposite( overlayAlpha );
-
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        });
+//        JButton openButton = new JButton("Import labels");
+//        openButton.addActionListener(e -> {
+//            try {
+//                selectFile(0.8);
+//                ImageOverlay io = new ImageOverlay();
+//                io.setComposite( overlayAlpha );
+//
+//            } catch (IOException ioException) {
+//                ioException.printStackTrace();
+//            }
+//        });
         JButton featureButton = new JButton("Create labels");
         featureButton.addActionListener(e ->{
             new FeaturePanelNew(featureManager);
@@ -194,11 +192,11 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         fc.setVisible(true);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         JPanel buttonPanel = new JPanel(); //use FlowLayout
-        buttonPanel.add(openButton);
+//        buttonPanel.add(openButton);
         buttonPanel.add(featureButton);
 
-        openButton.setVisible(true);
-        openButton.addActionListener(this);
+//        openButton.setVisible(true);
+//        openButton.addActionListener(this);
         featureButton.addActionListener(this);
         File labels = new File("label");
         if(!labels.exists()){
@@ -229,83 +227,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         this.frame.add(learningP);
         this.frame.setVisible(true);
     }
-//    public void propertyChange(PropertyChangeEvent e) {
-//        Object source = e.getSource();
-//        if (source == amountField) {
-//            amount = ((Number)amountField.getValue()).doubleValue();
-//        } else if (source == rateField) {
-//            rate = ((Number)rateField.getValue()).doubleValue();
-//        } else if (source == numPeriodsField) {
-//            numPeriods = ((Number)numPeriodsField.getValue()).intValue();
-//        }
-//
-//        double payment = computePayment(amount, rate, numPeriods);
-//        paymentField.setValue(new Double(payment));
-//    }
 
-
-    public void selectFile(double percentage) throws IOException {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
-            File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
-            new File(m+"/label").mkdirs();
-            File images = new File (m+"/image");
-            File labels = new File(m+"/label");
-            String imagesPath = images.getPath();
-            String labelPath = labels.getPath();
-            FileUtils.copyDirectory(f, labels);
-            FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), images);
-            System.out.println(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR));
-            File[] imagesArr = images.listFiles();
-            File[] labelsArr = labels.listFiles();
-            Arrays.sort(imagesArr);
-            Arrays.sort(labelsArr);
-            for (int i = 0; i < imagesArr.length; i++){
-                imagesArr[i].renameTo(new File(images +"/" + i + ".png"));
-
-            }
-
-            for (int l = 0; l < labelsArr.length; l++){
-                labelsArr[l].renameTo(new File(labels +"/"+ l + ".png"));
-            }
-            for (int c = 0; c < imagesArr.length; c++) {
-                BufferedImage bgImage = readImage(imagesPath+"/"+c + ".png");
-                BufferedImage fgImage = readImage(labelPath+"/"+c + ".png");
-
-                overLay(bgImage,fgImage);
-
-            }
-            new File(m+"/train").mkdirs();
-            new File(m+"/test").mkdirs();
-            new File(m+"/train/image").mkdirs();
-            new File(m+"/test/image").mkdirs();
-            new File(m+"/train/label").mkdirs();
-            new File(m+"/test/label").mkdirs();
-
-            int index = (int) (imagesArr.length*percentage);
-            for (int j = 0; j < index; j++){
-                FileUtils.copyFileToDirectory(new File(images + "/" + j + ".png"), new File(m+"/train/image"));
-
-            }
-            for (int j = 0; j < index; j++){
-                FileUtils.copyFileToDirectory(new File(labels + "/" + j+ ".png"), new File(m+"/train/label"));
-
-            }
-            for (int g = index; g < imagesArr.length ; g++){
-                FileUtils.copyFileToDirectory(new File(images + "/" + g+ ".png"), new File(m+"/test/image"));
-            }
-            for (int g = index; g < imagesArr.length ; g++){
-                FileUtils.copyFileToDirectory(new File(labels + "/" + g+ ".png"), new File(m+"/test/label"));
-            }
-            new File(m+"/image").delete();
-            new File(m+"/label").delete();
-
-        } else {
-            System.out.println("doesnt work");
-        }
-    }
     public BufferedImage overLay(BufferedImage bgImage, BufferedImage fgImage){
 
         Graphics2D g = bgImage.createGraphics();

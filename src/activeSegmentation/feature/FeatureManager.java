@@ -377,15 +377,17 @@ public class FeatureManager  {
 					roi.setFillColor(classInfo.getColor());
 					imageProcessor.drawRoi(roi);
 				}
-				FileSaver fs = new FileSaver(ip);
-				fs.saveAsPng();
+
 				featureInfo.addTrainingRois(imageKey, trainingRois);
 				classRois.addAll(classInfo.getTrainingRois(imageKey));
 			}
+			FileSaver fs = new FileSaver(ip);
+			fs.saveAsPng();
 			for (String imageKey : classInfo.getTestingRoiSlices()) {
 				List<String> testingRois = new ArrayList<String>();
 				for (Roi roi : classInfo.getTestingRois(imageKey)) {
 					testingRois.add(roi.getName());
+					roi.setFillColor(classInfo.getColor());
 				}
 				featureInfo.addTrainingRois(imageKey, testingRois);
 				classRois.addAll(classInfo.getTestingRois(imageKey));

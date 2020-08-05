@@ -868,8 +868,8 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			for (int g = index; g < imagesArr.length ; g++){
 				FileUtils.copyFileToDirectory(new File(labels + "/" + g+ ".png"), new File(m+"/test/label"));
 			}
-			new File(m+"/image").delete();
-			new File(m+"/label").delete();
+			FileUtils.deleteDirectory(images);
+			FileUtils.deleteDirectory(labels);
 
 		} else {
 			System.out.println("doesnt work");

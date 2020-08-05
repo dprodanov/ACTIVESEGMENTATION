@@ -359,24 +359,25 @@ public class FeatureManager  {
 	public void saveFeatureMetadata() {
 		projectInfo = projectManager.getMetaInfo();
 		projectInfo.resetFeatureInfo();
+		ImagePlus ip = IJ.createImage("label", "8-bit white", 512, 512, 1);
+		ImageProcessor imageProcessor = ip.getProcessor();
 		for (ClassInfo classInfo : classes.values()) {
 			List<Roi> classRois = new ArrayList<Roi>();
 			FeatureInfo featureInfo = new FeatureInfo();
 			featureInfo.setKey(classInfo.getKey());
 			featureInfo.setLabel(classInfo.getLabel());
 			featureInfo.setColor(classInfo.getColor().getRGB());
+
 			for (String imageKey : classInfo.getTrainingRoiSlices()) {
 				List<String> trainingRois = new ArrayList<String>();
-				ImagePlus ip = IJ.createImage("label", "8-bit white", 512, 512, 1);
+
 				for (Roi roi : classInfo.getTrainingRois(imageKey)) {
-					ip.setRoi(roi);
-					ip.draw();
+//					addRoiInstance(imageProcessor, classIndex, roi);
 					trainingRois.add(roi.getName());
+					roi.setFillColor(classInfo.getColor());
+					imageProcessor.drawRoi(roi);
 				}
-				ip.show();
-				ImagePlus dup = ip.duplicate();
 				FileSaver fs = new FileSaver(ip);
-				new File(ASCommon.DEEPLEARNINGDIR + "/labels").mkdirs();
 				fs.saveAsPng();
 				featureInfo.addTrainingRois(imageKey, trainingRois);
 				classRois.addAll(classInfo.getTrainingRois(imageKey));
@@ -710,6 +711,44 @@ public class FeatureManager  {
 			colors.add(classInfo.getColor());
 		}
 		return colors;
+	}
+
+	/**
+	 * Add training samples from a rectangular roi
+	 *
+	 * @param trainingData set of instances to add to
+	 * @param classIndex class index value
+	 * @param sliceNum number of 2d slice being processed
+	 * @param r shape roi
+	 * @return number of instances added
+	 */
+	private ImageProcessor addRoiInstance(
+			ImageProcessor ip,
+			int classIndex,
+			Roi r)
+	{
+
+		final Rectangle rect = r.getBounds();
+		final Polygon poly=r.getPolygon();
+		final int x0 = rect.x;
+		final int y0 = rect.y;
+
+		final int lastX = x0 + rect.width;
+		final int lastY = y0 + rect.height;
+
+		for( int x = x0; x < lastX; x++ )
+			for( int y = y0; y < lastY; y++ )
+			{
+
+				if(poly.contains(new Point(x0, y0))){
+					ip.set(x, y, classIndex);
+
+				}
+				// increase number of instances for this class
+
+			}
+		return ip;
+
 	}
 
 }

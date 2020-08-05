@@ -56,19 +56,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
             UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
             uNetImplementation.importData();
 
-
-            //System.out.println(this.featureSelList.getSelectedIndex());
-//            this.projectInfo.setFeatureSelection((String)this.featureSelList.getSelectedValue());
-//
-//            // System.out.println("in set classifiler");
-//            IDeepLearning testClassifier=setClassifier();
-//
-//            if(testClassifier!=null) {
-//                IDeepLearning deepModel = new UNetImplementation();
-//                this.deepLearningManager.setClassifier(deepModel);
-//                this.projectManager.updateMetaInfo(this.projectInfo);
-//            }
-
         }
     }
 

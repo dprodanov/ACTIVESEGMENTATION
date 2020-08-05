@@ -887,5 +887,4 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	}
 
 
-
 }

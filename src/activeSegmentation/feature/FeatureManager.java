@@ -359,7 +359,7 @@ public class FeatureManager  {
 	public void saveFeatureMetadata() {
 		projectInfo = projectManager.getMetaInfo();
 		projectInfo.resetFeatureInfo();
-		ImagePlus ip = IJ.createImage("label", "8-bit white", 512, 512, 1);
+		ImagePlus ip = IJ.createImage("label", "8-bit black", 512, 512, 1);
 		ImageProcessor imageProcessor = ip.getProcessor();
 		for (ClassInfo classInfo : classes.values()) {
 			List<Roi> classRois = new ArrayList<Roi>();
@@ -374,15 +374,13 @@ public class FeatureManager  {
 				for (Roi roi : classInfo.getTrainingRois(imageKey)) {
 //					addRoiInstance(imageProcessor, classIndex, roi);
 					trainingRois.add(roi.getName());
-					roi.setFillColor(classInfo.getColor());
+					roi.setFillColor(Color.white);
 					imageProcessor.drawRoi(roi);
 				}
-
 				featureInfo.addTrainingRois(imageKey, trainingRois);
 				classRois.addAll(classInfo.getTrainingRois(imageKey));
 			}
-			FileSaver fs = new FileSaver(ip);
-			fs.saveAsPng();
+
 			for (String imageKey : classInfo.getTestingRoiSlices()) {
 				List<String> testingRois = new ArrayList<String>();
 				for (Roi roi : classInfo.getTestingRois(imageKey)) {
@@ -400,7 +398,8 @@ public class FeatureManager  {
 			}
 			projectInfo.addFeature(featureInfo);
 		}
-
+		FileSaver fs = new FileSaver(ip);
+		fs.saveAsPng();
 		projectManager.writeMetaInfo(projectInfo);
 	}
 

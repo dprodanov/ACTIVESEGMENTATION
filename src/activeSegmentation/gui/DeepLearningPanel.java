@@ -178,12 +178,9 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
         fc.setVisible(true);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        JPanel buttonPanel = new JPanel(); //use FlowLayout
-//        buttonPanel.add(openButton);
+        JPanel buttonPanel = new JPanel();
         buttonPanel.add(featureButton);
 
-//        openButton.setVisible(true);
-//        openButton.addActionListener(this);
         featureButton.addActionListener(this);
         File labels = new File("label");
         if(!labels.exists()){

@@ -92,6 +92,7 @@ public interface ASCommon {
 	public static final String FILTERSDIR="FILTERSDIR";
 	public static final String LEARNINGDIR="LEARNINGDIR";
 	public static final String IMAGESDIR="IMAGESDIR";
+	public static final String LABELSDIR="LABELSDIR";
 	public static final String EVALUATIONDIR="EVALUATIONDIR";
 	public static final String DEEPLEARNINGDIR="DEEPLEARNINGDIR";
 	

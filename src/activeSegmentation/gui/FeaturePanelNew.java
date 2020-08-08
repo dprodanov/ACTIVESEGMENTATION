@@ -17,6 +17,7 @@ import ij.gui.TextRoi;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -94,6 +95,8 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	private JComboBox<LearningType> learningType;
 	private JFrame frame;
 	private Button labels;
+	ProjectManager projectManager = new ProjectManager();
+	String labelPath = projectManager.getMetaInfo().getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR) + "/label";
 
 	/*
 	 * constructor 
@@ -423,6 +426,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		if(event==SAVE_BUTTON_PRESSED){
 			featureManager.saveFeatureMetadata();
 			JOptionPane.showMessageDialog(null, "Successfully saved regions of interest");
+
 		} //end if
 		
 		if(event==SAVECLASS_BUTTON_PRESSED){
@@ -441,6 +445,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			ImagePlus image=featureManager.getPreviousImage();
 			imageNum.setText(Integer.toString(featureManager.getCurrentSlice()));
 			loadImage(image);
+			updateResultOverlay(image);
 			
 			if (showColorOverlay){
 				if(featureManager.getProjectType()==ProjectType.CLASSIF) 
@@ -463,6 +468,7 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			ImagePlus image=featureManager.getNextImage();
 			imageNum.setText(Integer.toString(featureManager.getCurrentSlice()));
 			loadImage(image);
+			updateResultOverlay(image);
 			if (showColorOverlay){
 				if(featureManager.getProjectType()==ProjectType.CLASSIF)
 					classifiedImage = null;
@@ -528,9 +534,23 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 		} //end if
 
 		if(event==LABELS_UPLOAD){
-			System.out.println("Labels uploaded");
+			JFileChooser chooser = new JFileChooser();
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				File f = chooser.getSelectedFile();
+				ProjectManager projectManager = new ProjectManager();
+				ProjectInfo projectInfo = projectManager.getMetaInfo();
+				String path = projectInfo.getProjectDirectory().get(ASCommon.LABELSDIR);
+//				FileUtils.copyDirectory(f, dir);
+				for (File file: f.listFiles()){
+					FileUtils.copyFile(file, new File(path+"/"+ FilenameUtils.getBaseName(file.getName())+"1.png"));
+				}
+				updateResultOverlay(featureManager.getCurrentImage());
+
+			}
 			selectFile(0.8);
 
+			System.out.println("Labels uploaded");
 		} //end if
 		
 		if(event.getActionCommand()== "ColorButton"){	
@@ -614,12 +634,18 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	public void updateResultOverlay(ImagePlus classifiedImage)
 	{
 		if(featureManager.getProjectType()==ProjectType.SEGM) {
-			ImageProcessor overlay = classifiedImage.getProcessor().duplicate();
+			System.out.println(classifiedImage.getTitle());
+			ProjectManager projectManager = new ProjectManager();
+			ProjectInfo projectInfo = projectManager.getMetaInfo();
+			BufferedImage fgImage = readImage(projectInfo.getProjectDirectory().get(ASCommon.LABELSDIR)+ "/" + classifiedImage.getTitle());
+			ImagePlus imagePlus = new ImagePlus("label", fgImage);
+			ImageProcessor overlay = imagePlus.getProcessor();
 			overlay = overlay.convertToByte(false);
 			setLut(featureManager.getColors());
 			overlay.setColorModel(overlayLUT);
 			resultOverlay.setImage(overlay);
 			displayImage.updateAndDraw();
+
 		}
 
 		if(featureManager.getProjectType()== ProjectType.CLASSIF) {
@@ -808,12 +834,13 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	}
 
 	public void selectFile(double percentage) throws IOException {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			File f = chooser.getSelectedFile();
+//		JFileChooser chooser = new JFileChooser();
+//		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
 			ProjectManager projectManager = new ProjectManager();
 			ProjectInfo projectInfo = projectManager.getMetaInfo();
+			File f = new File(projectInfo.getProjectDirectory().get(ASCommon.LABELSDIR));
 			File m = new File(projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR));
 			new File(m+"/label").mkdirs();
 			File images = new File (m+"/image");
@@ -834,17 +861,17 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 				labelsArr[l].renameTo(new File(labels +"/"+ l + ".png"));
 			}
 
-			for (int c = 0; c < imagesArr.length; c++) {
-				BufferedImage bgImage = readImage(imagesPath+"/"+c + ".png");
-				BufferedImage fgImage = readImage(labelPath+"/"+c + ".png");
-				ImagePlus imagePlus = new ImagePlus("label", fgImage);
-				ImageProcessor overlay = imagePlus.getProcessor();
-				overlay = overlay.convertToByte(false);
-				setLut(featureManager.getColors());
-				overlay.setColorModel(overlayLUT);
-				resultOverlay.setImage(overlay);
-				displayImage.updateAndDraw();
-			}
+//			for (int c = 0; c < imagesArr.length; c++) {
+//				BufferedImage bgImage = readImage(imagesPath+"/"+c + ".png");
+//				BufferedImage fgImage = readImage(labelPath+"/"+c + ".png");
+//				ImagePlus imagePlus = new ImagePlus("label", fgImage);
+//				ImageProcessor overlay = imagePlus.getProcessor();
+//				overlay = overlay.convertToByte(false);
+//				setLut(featureManager.getColors());
+//				overlay.setColorModel(overlayLUT);
+//				resultOverlay.setImage(overlay);
+//				displayImage.updateAndDraw();
+//			}
 
 			new File(m+"/train").mkdirs();
 			new File(m+"/test").mkdirs();
@@ -871,9 +898,6 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			FileUtils.deleteDirectory(images);
 			FileUtils.deleteDirectory(labels);
 
-		} else {
-			System.out.println("doesnt work");
-		}
 	}
 
 	public static BufferedImage readImage(String fileLocation) {

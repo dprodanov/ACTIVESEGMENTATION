@@ -2,6 +2,7 @@ package activeSegmentation.gui;
 
 import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
+import activeSegmentation.deepLearning.FCN;
 import activeSegmentation.deepLearning.UNetImplementation;
 import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.learning.DeepLearningManager;
@@ -53,8 +54,10 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
     public void doAction(ActionEvent event) throws IOException {
         if (event == this.SAVE_BUTTON_PRESSED)     {
-            UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
-            uNetImplementation.importData();
+//            UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
+//            uNetImplementation.importData();
+            FCN fcn = new FCN(projectInfo);
+            fcn.importData();
 
         }
     }
@@ -96,11 +99,19 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
         JPanel learningJPanel = new JPanel();
         learningJPanel.setBorder(BorderFactory.createTitledBorder("Select the model"));
-        String[] models = {"UNet", "OtherModel"};
+        Button uNet = new Button("UNet");
+        Button roiBasedLearning = new Button("ROI based learning");
+        String[] models = {"UNet", "ROI based learning"};
         JList list = new JList(models);
-        JScrollPane scrollPane = new JScrollPane(list);
+        JPanel bg = new JPanel();
+        bg.add(uNet);
+        bg.add(roiBasedLearning);
+        JScrollPane scrollPane = new JScrollPane(bg);
         learningJPanel.add(scrollPane);
         learningJPanel.setBounds(30, 30, 250, 60);
+        uNet.addActionListener(e->
+               new UNetImplementation(projectInfo));
+//        roiBasedLearning.addActionListener();
 
 
         JPanel options = new JPanel();
@@ -122,7 +133,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JLabel learningRateLabel = new JLabel("Learning rate:");
         JLabel numEpochsLabel = new JLabel("Number of epochs:");
         JLabel batchSizeLabel = new JLabel("Batch size:");
-        JLabel fileSplitLabel = new JLabel("Ratio of file split:");
+
 
 
         JFormattedTextField learningRate = new JFormattedTextField();
@@ -158,17 +169,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JFileChooser fc = new JFileChooser();
         fc.setLayout(new BorderLayout());
         fc.setSize(800,500);
-//        JButton openButton = new JButton("Import labels");
-//        openButton.addActionListener(e -> {
-//            try {
-//                selectFile(0.8);
-//                ImageOverlay io = new ImageOverlay();
-//                io.setComposite( overlayAlpha );
-//
-//            } catch (IOException ioException) {
-//                ioException.printStackTrace();
-//            }
-//        });
+
         JButton featureButton = new JButton("Create labels");
         featureButton.addActionListener(e ->{
             new FeaturePanelNew(featureManager);

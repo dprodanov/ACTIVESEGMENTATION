@@ -834,9 +834,6 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 	}
 
 	public void selectFile(double percentage) throws IOException {
-//		JFileChooser chooser = new JFileChooser();
-//		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 
 			ProjectManager projectManager = new ProjectManager();
 			ProjectInfo projectInfo = projectManager.getMetaInfo();
@@ -845,8 +842,6 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			new File(m+"/label").mkdirs();
 			File images = new File (m+"/image");
 			File labels = new File(m+"/label");
-			String imagesPath = images.getPath();
-			String labelPath = labels.getPath();
 			FileUtils.copyDirectory(f, labels);
 			FileUtils.copyDirectory(new File(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR)), images);
 			System.out.println(projectInfo.getProjectDirectory().get(ASCommon.IMAGESDIR));
@@ -860,18 +855,6 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			for (int l = 0; l < labelsArr.length; l++){
 				labelsArr[l].renameTo(new File(labels +"/"+ l + ".png"));
 			}
-
-//			for (int c = 0; c < imagesArr.length; c++) {
-//				BufferedImage bgImage = readImage(imagesPath+"/"+c + ".png");
-//				BufferedImage fgImage = readImage(labelPath+"/"+c + ".png");
-//				ImagePlus imagePlus = new ImagePlus("label", fgImage);
-//				ImageProcessor overlay = imagePlus.getProcessor();
-//				overlay = overlay.convertToByte(false);
-//				setLut(featureManager.getColors());
-//				overlay.setColorModel(overlayLUT);
-//				resultOverlay.setImage(overlay);
-//				displayImage.updateAndDraw();
-//			}
 
 			new File(m+"/train").mkdirs();
 			new File(m+"/test").mkdirs();

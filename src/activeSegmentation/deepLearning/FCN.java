@@ -11,7 +11,7 @@ import org.datavec.image.loader.NativeImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.common.resources.DL4JResources;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.weights.WeightInit;
@@ -25,6 +25,8 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
+import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,26 +72,26 @@ public class FCN<numClasses> {
         DataSetIterator dataTrainIter = new RecordReaderDataSetIterator(rrTrain, batchSize, labelIndex, labelIndex, true);
         DataSetIterator dataTestIter = new RecordReaderDataSetIterator(rrTest, 1, labelIndex, labelIndex, true);
 
-
+        VGG16ImagePreProcessor vgg16ImagePreProcessor = new VGG16ImagePreProcessor();
+        dataTrainIter.setPreProcessor(vgg16ImagePreProcessor);
+        dataTestIter.setPreProcessor(vgg16ImagePreProcessor);
         ZooModel zooModel = VGG16.builder().build();
         ComputationGraph pretrainedNet = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         System.out.println(pretrainedNet.summary());
-        NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
-        scaler.fitLabel(true);
-        scaler.fit(dataTrainIter);
-        dataTrainIter.setPreProcessor(scaler);
-        scaler.fit(dataTestIter);
-        dataTestIter.setPreProcessor(scaler);
-        System.out.println(pretrainedNet.summary());
+//        setScaler(dataTrainIter, dataTestIter, pretrainedNet);
+        NormalizerMinMaxScaler scaler;
 
         ComputationGraph vggTransfer = new TransferLearning.GraphBuilder(pretrainedNet)
                 .setFeatureExtractor("fc2")
                 .removeVertexKeepConnections("predictions")
 
                 .addLayer("predictions",
-                        new DenseLayer.Builder()
-                                .weightInit(WeightInit.RELU)
-                                .activation(Activation.SIGMOID).build(), "fc2")
+                        new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                                .nIn(4096)
+                                .nOut(2)
+                                .weightInit(WeightInit.XAVIER)
+                                .activation(Activation.SOFTMAX).build(), "fc2")
+                .setOutputs("predictions")
                 .build();
 
 
@@ -100,7 +102,7 @@ public class FCN<numClasses> {
         int j = 0;
         while (dataTestIter.hasNext()) {
             DataSet t = dataTestIter.next();
-            scaler.revert(t);
+//            scaler.revert(t);
             INDArray[] predicted = vggTransfer.output(t.getFeatures());
             INDArray pred = predicted[0].reshape(new int[]{512, 512});
             Evaluation eval = new Evaluation();
@@ -117,4 +119,14 @@ public class FCN<numClasses> {
             j++;
         }
     }
+
+//    static void setScaler(DataSetIterator dataTrainIter, DataSetIterator dataTestIter, ComputationGraph pretrainedNet) {
+//        NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
+//        scaler.fitLabel(true);
+//        scaler.fit(dataTrainIter);
+//        dataTrainIter.setPreProcessor(scaler);
+//        scaler.fit(dataTestIter);
+//        dataTestIter.setPreProcessor(scaler);
+//        System.out.println(pretrainedNet.summary());
+//    }
 }

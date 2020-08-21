@@ -24,7 +24,6 @@ import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.File;
@@ -76,13 +75,9 @@ public class UNetImplementation {
         ZooModel zooModel = UNet.builder().build();
         ComputationGraph pretrainedNet = (ComputationGraph) zooModel.initPretrained(PretrainedType.SEGMENT);
         //System.out.println(pretrainedNet.summary());
-        NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
-        scaler.fitLabel(true);
-        scaler.fit(dataTrainIter);
-        dataTrainIter.setPreProcessor(scaler);
-        scaler.fit(dataTestIter);
-        dataTestIter.setPreProcessor(scaler);
-        System.out.println(pretrainedNet.summary());
+
+
+//        FCN.setScaler(dataTrainIter, dataTestIter, pretrainedNet);
 
         ComputationGraph unetTransfer = new TransferLearning.GraphBuilder(pretrainedNet)
                 .setFeatureExtractor("conv2d_23")
@@ -101,7 +96,7 @@ public class UNetImplementation {
         int j = 0;
         while (dataTestIter.hasNext()) {
             DataSet t = dataTestIter.next();
-            scaler.revert(t);
+//            scaler.revert(t);
             INDArray[] predicted = unetTransfer.output(t.getFeatures());
             INDArray pred = predicted[0].reshape(new int[]{512, 512});
             Evaluation eval = new Evaluation();

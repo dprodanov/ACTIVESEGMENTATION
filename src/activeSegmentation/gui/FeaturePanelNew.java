@@ -644,6 +644,11 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			setLut(featureManager.getColors());
 			overlay.setColorModel(overlayLUT);
 			resultOverlay.setImage(overlay);
+//			ImagePlus imagePlus1 = new ImagePlus();
+//			ImageProcessor imageProcessor = imagePlus1.getProcessor();
+//			imageProcessor.setColorModel(overlayLUT);
+//			imageProcessor.fill();
+//			resultOverlay.setImage(imageProcessor);
 			displayImage.updateAndDraw();
 
 		}
@@ -891,6 +896,18 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			e.printStackTrace();
 		}
 		return img;
+	}
+
+	public static ImagePlus invert(ImagePlus inputFile){
+		for (int x = 0; x < inputFile.getWidth(); x++) {
+			for (int y = 0; y < inputFile.getHeight(); y++) {
+				int rgba = inputFile.getRGB(x, y);
+				Color col = new Color(rgba, true);
+				col = new Color(255 - col.getRed(), 255 - col.getGreen(),
+						255 - col.getBlue());
+				inputFile.setRGB(x, y, col.getRGB());
+			}
+		}
 	}
 
 

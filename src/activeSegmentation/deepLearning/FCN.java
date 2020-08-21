@@ -76,6 +76,7 @@ public class FCN<numClasses> {
         dataTrainIter.setPreProcessor(vgg16ImagePreProcessor);
         dataTestIter.setPreProcessor(vgg16ImagePreProcessor);
         ZooModel zooModel = VGG16.builder().build();
+        zooModel.setInputShape(new int[][]{{512, 16, 16}});
         ComputationGraph pretrainedNet = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         System.out.println(pretrainedNet.summary());
 //        setScaler(dataTrainIter, dataTestIter, pretrainedNet);

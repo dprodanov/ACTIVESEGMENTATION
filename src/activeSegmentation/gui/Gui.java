@@ -6,7 +6,7 @@ import activeSegmentation.evaluation.EvaluationMetrics;
 import activeSegmentation.evaluation.EvaluationPanel;
 import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.learning.ClassifierManager;
-import activeSegmentation.learning.DeepLearningManager;
+//import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectManager;
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class Gui implements ASCommon {
 	private FeatureManager featureManager;
 	private ClassifierManager learningManager;
 	private ProjectManager projectManager;
-	private DeepLearningManager deepLearningManager;
+//	private DeepLearningManager deepLearningManager;
 	
 
 
@@ -86,7 +86,7 @@ public class Gui implements ASCommon {
 		}
 		if (event == this.DEEP_LEARNING_BUTTON_PRESSED) {
 			if (this.deepLearningPanel == null) {
-				this.deepLearningPanel = new DeepLearningPanel(this.projectManager, this.deepLearningManager, featureManager);
+				this.deepLearningPanel = new DeepLearningPanel(this.projectManager, featureManager);
 			}
 			SwingUtilities.invokeLater(this.deepLearningPanel);
 		}
@@ -115,7 +115,7 @@ public class Gui implements ASCommon {
 		this.controlPanel.add(addButton("Model Learning", null, 275, 250, 200, 50, this.LEARNING_BUTTON_PRESSED));
 
 		this.controlPanel.add(addButton("Deep Learning", null, 25, 350, 200, 50, this.DEEP_LEARNING_BUTTON_PRESSED));
-		this.controlPanel.add(addButton("EVALUATION", null, 275, 350, 200, 50, this.EVALUATION_BUTTON_PRESSED));
+//		this.controlPanel.add(addButton("EVALUATION", null, 275, 350, 200, 50, this.EVALUATION_BUTTON_PRESSED));
 
 		this.controlPanel.setLocation(0, 0);
 		this.mainFrame.add(this.controlPanel);

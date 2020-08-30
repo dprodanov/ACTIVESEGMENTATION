@@ -36,7 +36,7 @@ import java.util.Random;
 
 @AllArgsConstructor
 @Builder
-public class UNet implements IDeepLearning {
+public class UNetNoTransfer implements IDeepLearning {
     @Builder.Default private long seed = 1234;
     @Builder.Default private int[] inputShape = new int[] {3, 512, 512};
     @Builder.Default private int numClasses = 0;
@@ -46,7 +46,7 @@ public class UNet implements IDeepLearning {
     @Builder.Default private WorkspaceMode workspaceMode = WorkspaceMode.ENABLED;
     @Builder.Default private ConvolutionLayer.AlgoMode cudnnAlgoMode = ConvolutionLayer.AlgoMode.PREFER_FASTEST;
     protected static Random rng = new Random(1234);
-    protected static int epochs = 5;
+    protected static int epochs = 3;
     private static int batchSize = 1;
 
     private static int width = 512;
@@ -54,7 +54,7 @@ public class UNet implements IDeepLearning {
     private static int channels = 3;
     public static final String dataPath = "/home/jstachera/Documents/data";
 
-    public void run() throws IOException {
+    public void run(){
 
         File trainData = new File(dataPath + "/train/image");
         File testData = new File(dataPath + "/test/image");
@@ -66,17 +66,20 @@ public class UNet implements IDeepLearning {
 
 
         ImageRecordReader rrTrain = new ImageRecordReader(height, width, channels, labelMakerTrain);
-        rrTrain.initialize(train, null);
+        try {
+            rrTrain.initialize(train, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ImageRecordReader rrTest = new ImageRecordReader(height, width, channels, labelMakerTest);
-        rrTest.initialize(test, null);
+        try {
+            rrTest.initialize(test, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         int labelIndex = 1;
-//
-//        ImageTransform flipTransform1 = new FlipImageTransform(rng);
-//        ImageTransform flipTransform2 = new FlipImageTransform(new Random(123));
-//        ImageTransform warpTransform = new WarpImageTransform(rng, 42);
-//        List<ImageTransform> transforms = Arrays.asList(new ImageTransform[]{flipTransform1, warpTransform, flipTransform2});
 
         DataSetIterator dataTrainIter = new RecordReaderDataSetIterator(rrTrain, batchSize, labelIndex, labelIndex, true);
         DataSetIterator dataTestIter = new RecordReaderDataSetIterator(rrTest, 1, labelIndex, labelIndex, true);
@@ -87,12 +90,9 @@ public class UNet implements IDeepLearning {
         scaler.fit(dataTestIter);
         dataTestIter.setPreProcessor(scaler);
 
-//        for (ImageTransform transform : transforms) {
-//            rrTrain.initialize(train, transform);
-//        }
-
-        UNet un=new UNet();
+        UNetNoTransfer un=new UNetNoTransfer();
         ComputationGraph cp = un.init();
+
         System.out.println(cp.summary());
         cp.fit(dataTrainIter, epochs);
         int j = 0;
@@ -256,6 +256,7 @@ public class UNet implements IDeepLearning {
         ComputationGraphConfiguration conf = graph.build();
         ComputationGraph model = new ComputationGraph(conf);
         model.init();
+        System.out.println(model.summary());
         return model;
     }
 

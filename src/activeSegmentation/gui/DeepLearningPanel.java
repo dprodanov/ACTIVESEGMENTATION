@@ -2,10 +2,9 @@ package activeSegmentation.gui;
 
 import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
-import activeSegmentation.deepLearning.FCN;
-import activeSegmentation.deepLearning.UNetImplementation;
+import activeSegmentation.deepLearning.SegNetPretrained;
+import activeSegmentation.deepLearning.UNet;
 import activeSegmentation.feature.FeatureManager;
-import activeSegmentation.learning.DeepLearningManager;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.prj.ProjectManager;
 import activeSegmentation.util.GuiUtil;
@@ -33,31 +32,36 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     final JFrame frame = new JFrame("DEEP LEARNING");
     JList<String> featureSelList;
     final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent(this, 1, "Train");
-    DeepLearningManager deepLearningManager;
+    final ActionEvent UNET_BUTTON_PRESSED = new ActionEvent(this, 1, "Unet");
+    final ActionEvent SEGNET_BUTTON_PRESSED = new ActionEvent(this, 1, "SegNet");
+//    DeepLearningManager deepLearningManager;
     Button openButton;
     Button featureButton;
     JFileChooser fc;
     FeatureManager featureManager;
     int overlayOpacity = 33;
+    IDeepLearning model;
 
     Composite overlayAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, overlayOpacity / 100f);
 
 
 
-    public DeepLearningPanel(ProjectManager projectManager, DeepLearningManager deepLearningManager, FeatureManager featureManager)  {
+    public DeepLearningPanel(ProjectManager projectManager, FeatureManager featureManager)  {
         this.projectManager = projectManager;
-        this.deepLearningManager=deepLearningManager;
         this.featureManager = featureManager;
         this.projectInfo = projectManager.getMetaInfo();
         this.modelList = GuiUtil.model();
     }
 
     public void doAction(ActionEvent event) throws IOException {
+        if (event == this.UNET_BUTTON_PRESSED){
+            model = new UNet();
+        }
+        if (event == this.SEGNET_BUTTON_PRESSED){
+            model = new SegNetPretrained();
+        }
         if (event == this.SAVE_BUTTON_PRESSED)     {
-//            UNetImplementation uNetImplementation = new UNetImplementation(projectInfo);
-//            uNetImplementation.importData();
-            FCN fcn = new FCN(projectInfo);
-            fcn.importData();
+            model.run();
 
         }
     }
@@ -100,18 +104,15 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JPanel learningJPanel = new JPanel();
         learningJPanel.setBorder(BorderFactory.createTitledBorder("Select the model"));
         Button uNet = new Button("UNet");
-        Button roiBasedLearning = new Button("ROI based learning");
-        String[] models = {"UNet", "ROI based learning"};
+        Button SegNet = new Button("SegNet");
+        String[] models = {"UNet", "SegNet"};
         JList list = new JList(models);
         JPanel bg = new JPanel();
         bg.add(uNet);
-        bg.add(roiBasedLearning);
+        bg.add(SegNet);
         JScrollPane scrollPane = new JScrollPane(bg);
         learningJPanel.add(scrollPane);
         learningJPanel.setBounds(30, 30, 250, 60);
-        uNet.addActionListener(e->
-               new UNetImplementation(projectInfo));
-//        roiBasedLearning.addActionListener();
 
 
         JPanel options = new JPanel();
@@ -197,9 +198,9 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         dataAugmentationPanel.setBounds(30, 230, 250, 80);
 
         Checkbox flip = new Checkbox("Flip");
-        Checkbox otherTransform = new Checkbox("Something else");
+        Checkbox rotate = new Checkbox("Rotate");
         dataAugmentationPanel.add(flip);
-        dataAugmentationPanel.add(otherTransform);
+        dataAugmentationPanel.add(rotate);
 
         learningP.add(importLabels);
         learningP.add(parametersPanel);
@@ -251,22 +252,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         String options = "";
         String[] optionsArray = ((OptionHandler)c).getOptions();
         System.out.println(originalOptions);
-//        if ((c instanceof OptionHandler)) {
-//            options = Utils.joinOptions(optionsArray);
-//        }
-//        if ((!this.originalClassifierName.equals(c.getClass().getName())) ||
-//                (!this.originalOptions.equals(options))) {
-//            try
-//            {
-//                AbstractClassifier cls = (AbstractClassifier)c.getClass().newInstance();
-//                cls.setOptions(optionsArray);
-//                return cls;
-//            }
-//            catch (Exception ex)
-//            {
-//                ex.printStackTrace();
-//            }
-//        }
+
         return null;
     }
 

@@ -61,6 +61,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
             model = new SegNetPretrained();
         }
         if (event == this.SAVE_BUTTON_PRESSED)     {
+            IDeepLearning model = new UNet();
             model.run();
 
         }

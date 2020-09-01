@@ -1,6 +1,8 @@
 package activeSegmentation.deepLearning;
 
+import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
+import activeSegmentation.prj.ProjectInfo;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
@@ -52,10 +54,10 @@ public class UNetNoTransfer implements IDeepLearning {
     private static int width = 512;
     private static int height = 512;
     private static int channels = 3;
-    public static final String dataPath = "/home/jstachera/Documents/data";
+    public static String dataPath;
 
-    public void run(){
-
+    public void run(ProjectInfo projectInfo){
+        dataPath = projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR);
         File trainData = new File(dataPath + "/train/image");
         File testData = new File(dataPath + "/test/image");
         LabelGenerator labelMakerTrain = new LabelGenerator(dataPath + "/train");

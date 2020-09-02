@@ -1,0 +1,225 @@
+Deeplearning4j OOM Exception Encountered for ComputationGraph
+Timestamp:                              2020-09-02 12:02:20.499
+Thread ID                               16
+Thread Name                             AWT-EventQueue-1
+
+
+Stack Trace:
+java.lang.OutOfMemoryError: Cannot allocate new LongPointer(10): totalBytes = 238M, physicalBytes = 7023M
+	at org.bytedeco.javacpp.LongPointer.<init>(LongPointer.java:76)
+	at org.bytedeco.javacpp.LongPointer.<init>(LongPointer.java:41)
+	at org.nd4j.linalg.cpu.nativecpu.ops.CpuOpContext.setIArguments(CpuOpContext.java:53)
+	at org.deeplearning4j.nn.layers.mkldnn.MKLDNNConvHelper.preOutput(MKLDNNConvHelper.java:132)
+	at org.deeplearning4j.nn.layers.convolution.ConvolutionLayer.preOutput(ConvolutionLayer.java:363)
+	at org.deeplearning4j.nn.layers.convolution.ConvolutionLayer.activate(ConvolutionLayer.java:444)
+	at org.deeplearning4j.nn.graph.vertex.impl.LayerVertex.doForward(LayerVertex.java:111)
+	at org.deeplearning4j.nn.graph.ComputationGraph.ffToLayerActivationsInWS(ComputationGraph.java:2135)
+	at org.deeplearning4j.nn.graph.ComputationGraph.computeGradientAndScore(ComputationGraph.java:1372)
+	at org.deeplearning4j.nn.graph.ComputationGraph.computeGradientAndScore(ComputationGraph.java:1341)
+	at org.deeplearning4j.optimize.solvers.BaseOptimizer.gradientAndScore(BaseOptimizer.java:170)
+	at org.deeplearning4j.optimize.solvers.StochasticGradientDescent.optimize(StochasticGradientDescent.java:63)
+	at org.deeplearning4j.optimize.Solver.optimize(Solver.java:52)
+	at org.deeplearning4j.nn.graph.ComputationGraph.fitHelper(ComputationGraph.java:1165)
+	at org.deeplearning4j.nn.graph.ComputationGraph.fit(ComputationGraph.java:1115)
+	at org.deeplearning4j.nn.graph.ComputationGraph.fit(ComputationGraph.java:1082)
+	at org.deeplearning4j.nn.graph.ComputationGraph.fit(ComputationGraph.java:1018)
+	at org.deeplearning4j.nn.graph.ComputationGraph.fit(ComputationGraph.java:1006)
+	at activeSegmentation.deepLearning.UNet.run(UNet.java:100)
+	at activeSegmentation.gui.DeepLearningPanel.doAction(DeepLearningPanel.java:65)
+	at activeSegmentation.gui.DeepLearningPanel$1.actionPerformed(DeepLearningPanel.java:274)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2022)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2348)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6539)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3324)
+	at java.awt.Component.processEvent(Component.java:6304)
+	at java.awt.Container.processEvent(Container.java:2239)
+	at java.awt.Component.dispatchEventImpl(Component.java:4889)
+	at java.awt.Container.dispatchEventImpl(Container.java:2297)
+	at java.awt.Component.dispatchEvent(Component.java:4711)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4904)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4535)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4476)
+	at java.awt.Container.dispatchEventImpl(Container.java:2283)
+	at java.awt.Window.dispatchEventImpl(Window.java:2746)
+	at java.awt.Component.dispatchEvent(Component.java:4711)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:760)
+	at java.awt.EventQueue.access$500(EventQueue.java:97)
+	at java.awt.EventQueue$3.run(EventQueue.java:709)
+	at java.awt.EventQueue$3.run(EventQueue.java:703)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:74)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:84)
+	at java.awt.EventQueue$4.run(EventQueue.java:733)
+	at java.awt.EventQueue$4.run(EventQueue.java:731)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:74)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:730)
+	at org.GNOME.Accessibility.AtkWrapper$6.dispatchEvent(AtkWrapper.java:715)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:205)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
+Caused by: java.lang.OutOfMemoryError: Physical memory usage is too high: physicalBytes (7023M) > maxPhysicalBytes (7023M)
+	at org.bytedeco.javacpp.Pointer.deallocator(Pointer.java:589)
+	at org.bytedeco.javacpp.Pointer.init(Pointer.java:125)
+	at org.bytedeco.javacpp.LongPointer.allocateArray(Native Method)
+	at org.bytedeco.javacpp.LongPointer.<init>(LongPointer.java:68)
+	... 57 more
+
+
+========== Memory Information ==========
+----- Version Information -----
+Deeplearning4j Version                  1.0.0-beta5
+Deeplearning4j CUDA                     <not present>
+
+----- System Information -----
+Operating System                        GNU/Linux Ubuntu 18.04.4 LTS
+CPU                                     Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+CPU Cores - Physical                    6
+CPU Cores - Logical                     12
+Total System Memory                      15.42 GiB (16559546368)
+
+----- ND4J Environment Information -----
+Data Type                               FLOAT
+backend                                 CPU
+blas.vendor                             OPENBLAS
+os                                      Linux
+
+----- Memory Configuration -----
+JVM Memory: XMX                           3.43 GiB (3682074624)
+JVM Memory: current                     748.00 MiB (784334848)
+JavaCPP Memory: Max Bytes                 3.43 GiB (3682074624)
+JavaCPP Memory: Max Physical              6.86 GiB (7364149248)
+JavaCPP Memory: Current Bytes           238.70 MiB (250290540)
+JavaCPP Memory: Current Physical          6.86 GiB (7369924608)
+Periodic GC Enabled                     false
+
+----- Workspace Information -----
+Workspaces: # for current thread        8
+Current thread workspaces:
+  Name                      State       Size                          # Cycles            
+  WS_LAYER_WORKING_MEM      CLOSED      130.56 MiB (136902082)        79                  
+  WS_ALL_LAYERS_ACT         CLOSED        1.16 GiB (1247438438)       2                   
+  WS_LAYER_ACT_2            CLOSED           .00 B                    5                   
+  WS_LAYER_ACT_3            CLOSED           .00 B                    5                   
+  WS_LAYER_ACT_4            CLOSED           .00 B                    11                  
+  WS_LAYER_ACT_5            CLOSED           .00 B                    8                   
+  WS_LAYER_ACT_0            CLOSED           .00 B                    6                   
+  WS_LAYER_ACT_1            CLOSED           .00 B                    3                   
+Workspaces total size                     1.29 GiB (1384340520)
+
+----- Network Information -----
+Network # Parameters                    31032853
+Parameter Memory                        118.38 MiB (124131412)
+Parameter Gradients Memory              118.38 MiB (124131412)
+Updater                                 <not initialized>
+Params + Gradient + Updater Memory      118.38 MiB (124131412)
+Iteration Count                         0
+Epoch Count                             0
+Backprop Type                           Standard
+Workspace Mode: Training                ENABLED
+Workspace Mode: Inference               ENABLED
+Number of Layers                        35
+Layer Counts
+  CnnLossLayer                            1
+  ConvolutionLayer                        24
+  DropoutLayer                            2
+  SubsamplingLayer                        4
+  Upsampling2D                            4
+Layer Parameter Breakdown
+  Idx Name                 Layer Type           Layer # Parameters   Layer Parameter Memory
+  1   conv1-1              ConvolutionLayer     1792                   7.00 KiB (7168)   
+  2   conv1-2              ConvolutionLayer     36928                144.25 KiB (147712) 
+  3   pool1                SubsamplingLayer     0                         .00 B          
+  4   conv2-1              ConvolutionLayer     73856                288.50 KiB (295424) 
+  5   conv2-2              ConvolutionLayer     147584               576.50 KiB (590336) 
+  6   pool2                SubsamplingLayer     0                         .00 B          
+  7   conv3-1              ConvolutionLayer     295168                 1.13 MiB (1180672)
+  8   conv3-2              ConvolutionLayer     590080                 2.25 MiB (2360320)
+  9   pool3                SubsamplingLayer     0                         .00 B          
+  10  conv4-1              ConvolutionLayer     1180160                4.50 MiB (4720640)
+  11  conv4-2              ConvolutionLayer     2359808                9.00 MiB (9439232)
+  12  drop4                DropoutLayer         0                         .00 B          
+  13  pool4                SubsamplingLayer     0                         .00 B          
+  14  conv5-1              ConvolutionLayer     4719616               18.00 MiB (18878464)
+  15  conv5-2              ConvolutionLayer     9438208               36.00 MiB (37752832)
+  16  drop5                DropoutLayer         0                         .00 B          
+  17  up6-1                Upsampling2D         0                         .00 B          
+  18  up6-2                ConvolutionLayer     2097664                8.00 MiB (8390656)
+  20  conv6-1              ConvolutionLayer     4719104               18.00 MiB (18876416)
+  21  conv6-2              ConvolutionLayer     2359808                9.00 MiB (9439232)
+  22  up7-1                Upsampling2D         0                         .00 B          
+  23  up7-2                ConvolutionLayer     524544                 2.00 MiB (2098176)
+  25  conv7-1              ConvolutionLayer     1179904                4.50 MiB (4719616)
+  26  conv7-2              ConvolutionLayer     590080                 2.25 MiB (2360320)
+  27  up8-1                Upsampling2D         0                         .00 B          
+  28  up8-2                ConvolutionLayer     131200               512.50 KiB (524800) 
+  30  conv8-1              ConvolutionLayer     295040                 1.13 MiB (1180160)
+  31  conv8-2              ConvolutionLayer     147584               576.50 KiB (590336) 
+  32  up9-1                Upsampling2D         0                         .00 B          
+  33  up9-2                ConvolutionLayer     32832                128.25 KiB (131328) 
+  35  conv9-1              ConvolutionLayer     73792                288.25 KiB (295168) 
+  36  conv9-2              ConvolutionLayer     36928                144.25 KiB (147712) 
+  37  conv9-3              ConvolutionLayer     1154                   4.51 KiB (4616)   
+  38  conv10               ConvolutionLayer     19                      76.00 B          
+  39  output               CnnLossLayer         0                         .00 B          
+
+----- Layer Helpers - Memory Use -----
+Total Helper Count                      28
+Helper Count w/ Memory                  0
+Total Helper Persistent Memory Use           .00 B
+
+----- Network Activations: Inferred Activation Shapes -----
+Current Minibatch Size                  1
+Current Input Shape (Input 0)           [1, 3, 512, 512]
+Idx Name                 Layer Type           Activations Type                           Activations Shape    # Elements   Memory      
+0   input                InputVertex          InputTypeConvolutional(h=512,w=512,c=3)    [1, 3, 512, 512]     786432         3.00 MiB (3145728)
+1   conv1-1              ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=64)   [1, 64, 512, 512]    16777216      64.00 MiB (67108864)
+2   conv1-2              ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=64)   [1, 64, 512, 512]    16777216      64.00 MiB (67108864)
+3   pool1                SubsamplingLayer     InputTypeConvolutional(h=256,w=256,c=64)   [1, 64, 256, 256]    4194304       16.00 MiB (16777216)
+4   conv2-1              ConvolutionLayer     InputTypeConvolutional(h=256,w=256,c=128)  [1, 128, 256, 256]   8388608       32.00 MiB (33554432)
+5   conv2-2              ConvolutionLayer     InputTypeConvolutional(h=256,w=256,c=128)  [1, 128, 256, 256]   8388608       32.00 MiB (33554432)
+6   pool2                SubsamplingLayer     InputTypeConvolutional(h=128,w=128,c=128)  [1, 128, 128, 128]   2097152        8.00 MiB (8388608)
+7   conv3-1              ConvolutionLayer     InputTypeConvolutional(h=128,w=128,c=256)  [1, 256, 128, 128]   4194304       16.00 MiB (16777216)
+8   conv3-2              ConvolutionLayer     InputTypeConvolutional(h=128,w=128,c=256)  [1, 256, 128, 128]   4194304       16.00 MiB (16777216)
+9   pool3                SubsamplingLayer     InputTypeConvolutional(h=64,w=64,c=256)    [1, 256, 64, 64]     1048576        4.00 MiB (4194304)
+10  conv4-1              ConvolutionLayer     InputTypeConvolutional(h=64,w=64,c=512)    [1, 512, 64, 64]     2097152        8.00 MiB (8388608)
+11  conv4-2              ConvolutionLayer     InputTypeConvolutional(h=64,w=64,c=512)    [1, 512, 64, 64]     2097152        8.00 MiB (8388608)
+12  drop4                DropoutLayer         InputTypeConvolutional(h=64,w=64,c=512)    [1, 512, 64, 64]     2097152        8.00 MiB (8388608)
+13  pool4                SubsamplingLayer     InputTypeConvolutional(h=32,w=32,c=512)    [1, 512, 32, 32]     524288         2.00 MiB (2097152)
+14  conv5-1              ConvolutionLayer     InputTypeConvolutional(h=32,w=32,c=1024)   [1, 1024, 32, 32]    1048576        4.00 MiB (4194304)
+15  conv5-2              ConvolutionLayer     InputTypeConvolutional(h=32,w=32,c=1024)   [1, 1024, 32, 32]    1048576        4.00 MiB (4194304)
+16  drop5                DropoutLayer         InputTypeConvolutional(h=32,w=32,c=1024)   [1, 1024, 32, 32]    1048576        4.00 MiB (4194304)
+17  up6-1                Upsampling2D         InputTypeConvolutional(h=64,w=64,c=1024)   [1, 1024, 64, 64]    4194304       16.00 MiB (16777216)
+18  up6-2                ConvolutionLayer     InputTypeConvolutional(h=64,w=64,c=512)    [1, 512, 64, 64]     2097152        8.00 MiB (8388608)
+19  merge6               MergeVertex          InputTypeConvolutional(h=64,w=64,c=1024)   [1, 1024, 64, 64]    4194304       16.00 MiB (16777216)
+20  conv6-1              ConvolutionLayer     InputTypeConvolutional(h=64,w=64,c=512)    [1, 512, 64, 64]     2097152        8.00 MiB (8388608)
+21  conv6-2              ConvolutionLayer     InputTypeConvolutional(h=64,w=64,c=512)    [1, 512, 64, 64]     2097152        8.00 MiB (8388608)
+22  up7-1                Upsampling2D         InputTypeConvolutional(h=128,w=128,c=512)  [1, 512, 128, 128]   8388608       32.00 MiB (33554432)
+23  up7-2                ConvolutionLayer     InputTypeConvolutional(h=128,w=128,c=256)  [1, 256, 128, 128]   4194304       16.00 MiB (16777216)
+24  merge7               MergeVertex          InputTypeConvolutional(h=128,w=128,c=512)  [1, 512, 128, 128]   8388608       32.00 MiB (33554432)
+25  conv7-1              ConvolutionLayer     InputTypeConvolutional(h=128,w=128,c=256)  [1, 256, 128, 128]   4194304       16.00 MiB (16777216)
+26  conv7-2              ConvolutionLayer     InputTypeConvolutional(h=128,w=128,c=256)  [1, 256, 128, 128]   4194304       16.00 MiB (16777216)
+27  up8-1                Upsampling2D         InputTypeConvolutional(h=256,w=256,c=256)  [1, 256, 256, 256]   16777216      64.00 MiB (67108864)
+28  up8-2                ConvolutionLayer     InputTypeConvolutional(h=256,w=256,c=128)  [1, 128, 256, 256]   8388608       32.00 MiB (33554432)
+29  merge8               MergeVertex          InputTypeConvolutional(h=256,w=256,c=256)  [1, 256, 256, 256]   16777216      64.00 MiB (67108864)
+30  conv8-1              ConvolutionLayer     InputTypeConvolutional(h=256,w=256,c=128)  [1, 128, 256, 256]   8388608       32.00 MiB (33554432)
+31  conv8-2              ConvolutionLayer     InputTypeConvolutional(h=256,w=256,c=128)  [1, 128, 256, 256]   8388608       32.00 MiB (33554432)
+32  up9-1                Upsampling2D         InputTypeConvolutional(h=512,w=512,c=128)  [1, 128, 512, 512]   33554432     128.00 MiB (134217728)
+33  up9-2                ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=64)   [1, 64, 512, 512]    16777216      64.00 MiB (67108864)
+34  merge9               MergeVertex          InputTypeConvolutional(h=512,w=512,c=128)  [1, 128, 512, 512]   33554432     128.00 MiB (134217728)
+35  conv9-1              ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=64)   [1, 64, 512, 512]    16777216      64.00 MiB (67108864)
+36  conv9-2              ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=64)   [1, 64, 512, 512]    16777216      64.00 MiB (67108864)
+37  conv9-3              ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=2)    [1, 2, 512, 512]     524288         2.00 MiB (2097152)
+38  conv10               ConvolutionLayer     InputTypeConvolutional(h=512,w=512,c=1)    [1, 1, 512, 512]     262144         1.00 MiB (1048576)
+39  output               CnnLossLayer         InputTypeConvolutional(h=512,w=512,c=1)    [1, 1, 512, 512]     262144         1.00 MiB (1048576)
+Total Activations Memory                  1.11 GiB (1192230912)
+Total Activation Gradient Memory          1.11 GiB (1191182336)
+
+----- Network Training Listeners -----
+Number of Listeners                     0

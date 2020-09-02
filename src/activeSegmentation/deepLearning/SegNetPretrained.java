@@ -1,7 +1,9 @@
 package activeSegmentation.deepLearning;
 
 
+import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
+import activeSegmentation.prj.ProjectInfo;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
@@ -65,14 +67,11 @@ public class SegNetPretrained implements IDeepLearning {
     @Builder.Default
     private ConvolutionLayer.AlgoMode cudnnAlgoMode = ConvolutionLayer.AlgoMode.PREFER_FASTEST;
 
-    public static final String dataPath = "/home/jstachera/Documents/data";
+    public String dataPath;
 
-    public void run() throws IOException {
+    public void run(ProjectInfo projectInfo) throws IOException {
         SegNetPretrained segNet = new SegNetPretrained();
-        segNet.importData();
-    }
-
-    public void importData() throws IOException {
+        dataPath = projectInfo.getProjectDirectory().get(ASCommon.DEEPLEARNINGDIR);
         DL4JResources.setBaseDownloadURL("https://dl4jdata.blob.core.windows.net/");
         File trainData = new File(dataPath + "/train/image");
         File testData = new File(dataPath + "/test/image");

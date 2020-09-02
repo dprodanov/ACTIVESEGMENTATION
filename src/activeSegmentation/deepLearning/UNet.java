@@ -41,7 +41,6 @@ import java.util.Random;
 public class UNet implements IDeepLearning {
     @Builder.Default private long seed = 1234;
     @Builder.Default private int[] inputShape = new int[] {3, 512, 512};
-    @Builder.Default private int numClasses = 0;
     @Builder.Default private WeightInit weightInit = WeightInit.RELU;
     @Builder.Default private IUpdater updater = new AdaDelta();
     @Builder.Default private CacheMode cacheMode = CacheMode.NONE;

@@ -62,7 +62,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         }
         if (event == this.SAVE_BUTTON_PRESSED)     {
             IDeepLearning model = new UNet();
-            model.run();
+            model.run(projectInfo);
 
         }
     }
@@ -132,7 +132,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
         parametersPanel.setBounds(370, 20, 300, 100);
 
-        JLabel learningRateLabel = new JLabel("Learning rate:");
         JLabel numEpochsLabel = new JLabel("Number of epochs:");
         JLabel batchSizeLabel = new JLabel("Batch size:");
 
@@ -154,11 +153,10 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
 
 
-        learningRateLabel.setLabelFor(learningRateLabel);
+
         numEpochsLabel.setLabelFor(numEpochs);
         batchSizeLabel.setLabelFor(batchSize);
 
-        parametersPanel.add(learningRateLabel);
         parametersPanel.add(learningRate);
         parametersPanel.add(numEpochsLabel);
         parametersPanel.add(numEpochs);

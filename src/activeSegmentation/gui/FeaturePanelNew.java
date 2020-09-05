@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+
 public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 
 	/**
@@ -641,14 +642,10 @@ public class FeaturePanelNew extends ImageWindow implements ASCommon  {
 			ImagePlus imagePlus = new ImagePlus("label", fgImage);
 			ImageProcessor overlay = imagePlus.getProcessor();
 			overlay = overlay.convertToByte(false);
+			overlay.setMinAndMax(0, 1);
 			setLut(featureManager.getColors());
 			overlay.setColorModel(overlayLUT);
 			resultOverlay.setImage(overlay);
-//			ImagePlus imagePlus1 = new ImagePlus();
-//			ImageProcessor imageProcessor = imagePlus1.getProcessor();
-//			imageProcessor.setColorModel(overlayLUT);
-//			imageProcessor.fill();
-//			resultOverlay.setImage(imageProcessor);
 			displayImage.updateAndDraw();
 
 		}

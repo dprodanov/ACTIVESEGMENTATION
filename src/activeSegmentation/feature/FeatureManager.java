@@ -714,42 +714,4 @@ public class FeatureManager  {
 		return colors;
 	}
 
-	/**
-	 * Add training samples from a rectangular roi
-	 *
-	 * @param trainingData set of instances to add to
-	 * @param classIndex class index value
-	 * @param sliceNum number of 2d slice being processed
-	 * @param r shape roi
-	 * @return number of instances added
-	 */
-	private ImageProcessor addRoiInstance(
-			ImageProcessor ip,
-			int classIndex,
-			Roi r)
-	{
-
-		final Rectangle rect = r.getBounds();
-		final Polygon poly=r.getPolygon();
-		final int x0 = rect.x;
-		final int y0 = rect.y;
-
-		final int lastX = x0 + rect.width;
-		final int lastY = y0 + rect.height;
-
-		for( int x = x0; x < lastX; x++ )
-			for( int y = y0; y < lastY; y++ )
-			{
-
-				if(poly.contains(new Point(x0, y0))){
-					ip.set(x, y, classIndex);
-
-				}
-				// increase number of instances for this class
-
-			}
-		return ip;
-
-	}
-
 }

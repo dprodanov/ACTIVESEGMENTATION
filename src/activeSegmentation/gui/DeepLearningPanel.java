@@ -4,6 +4,7 @@ import activeSegmentation.ASCommon;
 import activeSegmentation.IDeepLearning;
 import activeSegmentation.deepLearning.SegNetPretrained;
 import activeSegmentation.deepLearning.UNet;
+import activeSegmentation.deepLearning.UNetNoTransfer;
 import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.prj.ProjectInfo;
 import activeSegmentation.prj.ProjectManager;
@@ -32,8 +33,10 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
     final JFrame frame = new JFrame("DEEP LEARNING");
     JList<String> featureSelList;
     final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent(this, 1, "Train");
-    final ActionEvent UNET_BUTTON_PRESSED = new ActionEvent(this, 1, "Unet");
-    final ActionEvent SEGNET_BUTTON_PRESSED = new ActionEvent(this, 1, "SegNet");
+    final ActionEvent UNET_BUTTON_PRESSED = new ActionEvent(this, 2, "Unet");
+    final ActionEvent SEGNET_BUTTON_PRESSED = new ActionEvent(this, 3, "SegNet");
+    final ActionEvent TRANSFER_BUTTON_PRESSED = new ActionEvent(this, 4, "Transfer");
+
 //    DeepLearningManager deepLearningManager;
     Button openButton;
     Button featureButton;
@@ -55,10 +58,13 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
     public void doAction(ActionEvent event) throws IOException {
         if (event == this.UNET_BUTTON_PRESSED){
-            model = new UNet();
+            model = new UNetNoTransfer();
         }
         if (event == this.SEGNET_BUTTON_PRESSED){
             model = new SegNetPretrained();
+        }
+        if (event == this.TRANSFER_BUTTON_PRESSED){
+            model = new UNet();
         }
         if (event == this.SAVE_BUTTON_PRESSED)     {
             IDeepLearning model = new UNet();
@@ -106,11 +112,9 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         learningJPanel.setBorder(BorderFactory.createTitledBorder("Select the model"));
         Button uNet = new Button("UNet");
         Button SegNet = new Button("SegNet");
-        String[] models = {"UNet", "SegNet"};
-        JList list = new JList(models);
         JPanel bg = new JPanel();
-        bg.add(uNet);
-        bg.add(SegNet);
+        bg.add(uNet, this.UNET_BUTTON_PRESSED);
+        bg.add(SegNet, this.SEGNET_BUTTON_PRESSED);
         JScrollPane scrollPane = new JScrollPane(bg);
         learningJPanel.add(scrollPane);
         learningJPanel.setBounds(30, 30, 250, 60);
@@ -126,7 +130,7 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         JPanel resetJPanel = new JPanel();
         resetJPanel.setBackground(Color.GRAY);
         resetJPanel.setBounds(370, 250, 200, 150);
-        resetJPanel.add(addButton("TRAIN", null, 600, 500, 300, 50, this.SAVE_BUTTON_PRESSED));
+        resetJPanel.add(addButton("TRAIN", null, 600, 500, 300, 50, this.TRANSFER_BUTTON_PRESSED));
 
         JPanel parametersPanel = new JPanel();
         parametersPanel.setBorder(BorderFactory.createTitledBorder("Learning Parameters"));
@@ -137,9 +141,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
 
 
 
-        JFormattedTextField learningRate = new JFormattedTextField();
-        learningRate.setColumns(2);
-        learningRate.addPropertyChangeListener("value", this);
         JFormattedTextField numEpochs = new JFormattedTextField();
         numEpochs.setColumns(2);
         numEpochs.addPropertyChangeListener("value", this);
@@ -157,7 +158,6 @@ public class DeepLearningPanel extends Component implements Runnable, ASCommon, 
         numEpochsLabel.setLabelFor(numEpochs);
         batchSizeLabel.setLabelFor(batchSize);
 
-        parametersPanel.add(learningRate);
         parametersPanel.add(numEpochsLabel);
         parametersPanel.add(numEpochs);
         parametersPanel.add(batchSizeLabel);
